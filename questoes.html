@@ -21,7 +21,9 @@
       padding: 30px;
       box-shadow: 0 0 15px black;
     }
-    h1 { margin-bottom: 20px; }
+    h1 {
+      margin-bottom: 20px;
+    }
     .entradas input {
       width: 100px; padding: 8px;
       margin: 0 10px 20px;
@@ -34,12 +36,20 @@
       background: #00b4d8; color: white;
       cursor: pointer; transition: background 0.3s;
     }
-    .entradas button:hover { background: #0096c7; }
+    .entradas button:hover {
+      background: #0096c7;
+    }
     .stats {
       text-align: left; margin-top: 30px;
       font-size: 18px; line-height: 1.5;
     }
-    .stats span { font-weight: bold; }
+    .stats span {
+      font-weight: bold;
+    }
+    .status-ind {
+      margin-top: 20px;
+      font-size: 18px;
+    }
     .voltar {
       margin-top: 30px;
     }
@@ -49,8 +59,12 @@
       text-decoration: none; border-radius: 8px;
       transition: background 0.3s;
     }
-    .voltar a:hover { background: #b42b45; }
-    audio { display: none; }
+    .voltar a:hover {
+      background: #b42b45;
+    }
+    audio {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -64,7 +78,11 @@
     </div>
 
     <div class="stats" id="stats">
-      <!-- Estatísticas serão inseridas aqui -->
+      <!-- Estatísticas serão exibidas aqui -->
+    </div>
+
+    <div class="status-ind">
+      🗡️ QCs totais: <span id="qcs">0</span>
     </div>
 
     <div class="voltar">
@@ -76,32 +94,47 @@
   <audio id="musica" src="audio/tema.mp3" autoplay loop></audio>
 
   <script>
-    // Função de som
+    // Toca efeito de clique
     function playClick() {
       const c = document.getElementById("click");
-      c.currentTime = 0; c.play();
+      c.currentTime = 0;
+      c.play();
     }
-    // Inicializa música após clique
+    // Inicia música após primeiro clique
     window.addEventListener('click', () => {
       const m = document.getElementById("musica");
-      if(m.paused) m.play();
+      if (m.paused) m.play();
     });
 
-    // Recupera log de questões
+    // Recupera histórico de registros
     let log = JSON.parse(localStorage.getItem("questoesLog") || "[]");
+    let qcs = parseInt(localStorage.getItem("qcs") || 0);
 
     const btn = document.getElementById("btnRegistrar");
     btn.addEventListener('click', () => {
       playClick();
-      const feitas = parseInt(document.getElementById("inputFeitas").value) || 0;
+      const feitas  = parseInt(document.getElementById("inputFeitas").value)  || 0;
       const acertos = parseInt(document.getElementById("inputAcertos").value) || 0;
-      if(feitas < acertos) {
+      if (feitas < acertos) {
         alert("Acertos não podem exceder questões feitas.");
         return;
       }
-      // adiciona entrada
+
+      // 1) Registra no histórico
       log.push({ t: Date.now(), f: feitas, a: acertos });
       localStorage.setItem("questoesLog", JSON.stringify(log));
+
+      // 2) Atualiza QCs
+      const ganhoQC = (feitas - acertos) * 1 + acertos * 2;
+      qcs += ganhoQC;
+      localStorage.setItem("qcs", qcs);
+
+      // 3) (Opcional) Atualiza XP também
+      let xp = parseInt(localStorage.getItem("xp") || 0);
+      const ganhoXP = (feitas - acertos) * 5 + acertos * 20;
+      localStorage.setItem("xp", xp + ganhoXP);
+
+      // Limpa campos e atualiza exibição
       document.getElementById("inputFeitas").value = "";
       document.getElementById("inputAcertos").value = "";
       atualizarStats();
@@ -109,26 +142,35 @@
 
     function atualizarStats() {
       const now = Date.now();
-      const oneDay = 24*3600*1000;
-      const oneWeek = 7*oneDay;
-      const oneMonth = 30*oneDay;
-      let dF=0, dA=0, wF=0, wA=0, mF=0, mA=0, tF=0, tA=0;
+      const oneDay   = 24 * 3600 * 1000;
+      const oneWeek  = 7 * oneDay;
+      const oneMonth = 30 * oneDay;
+
+      let dF = 0, dA = 0;
+      let wF = 0, wA = 0;
+      let mF = 0, mA = 0;
+      let tF = 0, tA = 0;
+
       log.forEach(entry => {
         const delta = now - entry.t;
-        tF += entry.f; tA += entry.a;
-        if(delta < oneDay) { dF += entry.f; dA += entry.a; }
-        if(delta < oneWeek){ wF += entry.f; wA += entry.a; }
-        if(delta < oneMonth){ mF += entry.f; mA += entry.a; }
+        tF += entry.f;
+        tA += entry.a;
+        if (delta < oneDay)   { dF += entry.f; dA += entry.a; }
+        if (delta < oneWeek)  { wF += entry.f; wA += entry.a; }
+        if (delta < oneMonth) { mF += entry.f; mA += entry.a; }
       });
+
       document.getElementById("stats").innerHTML = `
         Diário: <span>${dF}</span> feitas, <span>${dA}</span> acertos<br>
         Semanal: <span>${wF}</span> feitas, <span>${wA}</span> acertos<br>
         Mensal: <span>${mF}</span> feitas, <span>${mA}</span> acertos<br>
         Total: <span>${tF}</span> feitas, <span>${tA}</span> acertos
       `;
+
+      document.getElementById("qcs").textContent = qcs;
     }
 
-    // Executa na carga
+    // Executa ao carregar
     atualizarStats();
   </script>
 </body>
