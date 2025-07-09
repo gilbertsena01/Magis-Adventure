@@ -5,94 +5,100 @@
   <title>Magis Adventure</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       font-family: 'Segoe UI', sans-serif;
       background: url('img/fundo_batalha.jpg') no-repeat center center fixed;
       background-size: cover;
       color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       height: 100vh;
     }
 
     .logo {
-      font-size: 50px;
-      font-weight: bold;
+      font-size: 50px; font-weight: bold;
       animation: glow 2s ease-in-out infinite alternate;
-      margin-bottom: 20px;
-      text-align: center;
+      margin-bottom: 20px; text-align: center;
     }
-
     @keyframes glow {
-      from {
-        text-shadow: 0 0 10px #00b4d8, 0 0 20px #00b4d8;
-      }
-      to {
-        text-shadow: 0 0 20px #00b4d8, 0 0 40px #00b4d8;
-      }
+      from { text-shadow: 0 0 10px #00b4d8, 0 0 20px #00b4d8; }
+      to   { text-shadow: 0 0 20px #00b4d8, 0 0 40px #00b4d8; }
     }
 
     p {
-      font-size: 20px;
-      margin-bottom: 30px;
+      font-size: 20px; margin-bottom: 30px;
+      background: rgba(0,0,0,0.6);
+      padding: 10px 20px; border-radius: 10px;
       text-align: center;
-      background-color: rgba(0,0,0,0.6);
-      padding: 10px 20px;
-      border-radius: 10px;
     }
 
     button {
-      font-size: 18px;
-      padding: 12px 25px;
-      margin: 10px;
-      border: none;
-      border-radius: 10px;
-      background: #00b4d8;
-      color: white;
-      cursor: pointer;
-      transition: background 0.3s;
+      font-size: 18px; padding: 12px 25px; margin: 10px;
+      border: none; border-radius: 10px;
+      background: #00b4d8; color: white;
+      cursor: pointer; transition: background 0.3s;
     }
+    button:hover { background: #0096c7; }
 
-    button:hover {
-      background: #0096c7;
-    }
-
-    audio {
-      display: none;
-    }
+    audio { display: none; }
   </style>
 </head>
 <body>
   <div class="logo">⚖️ Magis Adventure</div>
   <p>Desafie os chefes. Evolua com estudo. Vença com sabedoria.</p>
 
-  <button onclick="novoJogo()">🆕 Novo Jogo</button>
-  <button onclick="continuar()">🎮 Continuar</button>
+  <button onclick="playClick(); novoJogo()">🆕 Novo Jogo</button>
+  <button onclick="playClick(); continuar()">🎮 Continuar</button>
 
   <audio id="musica" autoplay loop>
     <source src="audio/tema.mp3" type="audio/mpeg" />
-    Seu navegador não suporta áudio.
   </audio>
+  <audio id="click" src="audio/click.mp3"></audio>
 
   <script>
-    // Autoplay control
+    // Garante que a música comece após primeiro clique na página
     window.addEventListener("click", () => {
-      const audio = document.getElementById("musica");
-      if (audio.paused) {
-        audio.play();
-      }
+      const m = document.getElementById("musica");
+      if (m.paused) m.play();
     });
 
-    function novoJogo() {
-      if (confirm("Tem certeza que deseja reiniciar sua jornada?")) {
-        localStorage.clear();
-        window.location.href = "painel.html";
-      }
+    // Toca efeito de clique
+    function playClick() {
+      const c = document.getElementById("click");
+      c.currentTime = 0;
+      c.play();
     }
 
+    // Inicia novo jogo: pede nome + avatar e salva no localStorage
+    function novoJogo() {
+      const nome = prompt("Digite seu nome, aventureiro(a):");
+      if (!nome) return;
+
+      let opc;
+      do {
+        opc = prompt(
+          "Escolha seu avatar:\n" +
+          "1) Macleod, o Mercenário\n" +
+          "2) Zula, a Lutadora\n" +
+          "3) Merlin, o Mago"
+        );
+      } while (!["1","2","3"].includes(opc));
+
+      const avatar = opc === "1"
+        ? "avatar.png"
+        : opc === "2"
+          ? "avatar2.png"
+          : "avatar3.png";
+
+      // Reinicia todo o progresso e salva nome/avatar
+      localStorage.clear();
+      localStorage.setItem("nomeJogador", nome);
+      localStorage.setItem("avatarJogador", avatar);
+
+      window.location.href = "painel.html";
+    }
+
+    // Continua o jogo sem resetar
     function continuar() {
       window.location.href = "painel.html";
     }
