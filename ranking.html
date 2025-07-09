@@ -7,41 +7,53 @@
     body {
       margin: 0; padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #111; /* fallback */
+      background: url('img/fundo_painel.png') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
       display: flex; justify-content: center; align-items: center;
       height: 100vh;
-      color: white;
     }
     .painel {
-      background: url('img/fundo_painel.png') no-repeat center center;
-      background-size: cover;
-      width: 90%; max-width: 600px;
+      background: rgba(0,0,0,0.8);
       padding: 30px;
       border-radius: 16px;
       box-shadow: 0 0 20px rgba(0,0,0,0.7);
+      width: 90%; max-width: 600px;
       text-align: center;
     }
     h1 {
       margin-bottom: 20px;
     }
     .ranking-entry {
-      background: rgba(0,0,0,0.6);
-      margin: 10px 0;
-      padding: 12px;
-      border-radius: 8px;
       display: flex;
-      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.1);
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
       font-size: 18px;
+    }
+    .ranking-entry img {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 2px solid #00b4d8;
+      margin-right: 12px;
+    }
+    .ranking-entry .pos {
+      width: 30px;
+    }
+    .ranking-entry .name {
+      flex: 1; text-align: left;
+    }
+    .ranking-entry .xp {
+      width: 80px; text-align: right;
     }
     .voltar button {
       margin-top: 20px;
       padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      background: #00b4d8;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
+      border: none; border-radius: 8px;
+      background: #00b4d8; color: white;
+      font-size: 16px; cursor: pointer;
       transition: background 0.3s;
     }
     .voltar button:hover {
@@ -65,43 +77,41 @@
   <audio id="click" src="audio/click.mp3"></audio>
 
   <script>
-    // efeito de clique
     function playClick() {
       const c = document.getElementById("click");
       c.currentTime = 0;
       c.play();
     }
-
-    // garantir que o tema inicie após o primeiro clique
     window.addEventListener('click', () => {
       const m = document.getElementById("musica");
       if (m.paused) m.play();
     });
 
-    // dados do jogador atual
-    const nomeAtual = localStorage.getItem("nomeJogador") || "Você";
-    const xpAtual = parseInt(localStorage.getItem("xp") || 0);
+    // Dados do jogador atual
+    const nomeAtual   = localStorage.getItem("nomeJogador")   || "Você";
+    const xpAtual     = parseInt(localStorage.getItem("xp")   || 0);
+    const avatarAtual = localStorage.getItem("avatarJogador") || "avatar.png";
 
-    // ranking base (exemplo)
+    // Jogadores reais
     const ranking = [
-      { nome: "Alice", xp: 580 },
-      { nome: "Bruno", xp: 470 },
-      { nome: "Carlos", xp: 320 },
-      { nome: nomeAtual, xp: xpAtual }
+      { nome: "Alice",  xp: 580, avatar: "avatar2.png" },
+      { nome: "Bruno",  xp: 470, avatar: "avatar3.png" },
+      { nome: "Carlos", xp: 320, avatar: "avatar.png" },
+      { nome: nomeAtual, xp: xpAtual, avatar: avatarAtual }
     ];
 
-    // ordenar por XP decrescente
+    // Ordena por XP decrescente
     ranking.sort((a, b) => b.xp - a.xp);
 
-    // renderizar
     const container = document.getElementById("rankingLista");
-    ranking.forEach((j, i) => {
+    ranking.forEach((jog, i) => {
       const div = document.createElement("div");
       div.className = "ranking-entry";
       div.innerHTML = `
-        <span>${i+1}º</span>
-        <span>${j.nome}</span>
-        <span>${j.xp} XP</span>
+        <span class="pos">${i+1}º</span>
+        <img src="img/${jog.avatar}" alt="${jog.nome}">
+        <span class="name">${jog.nome}</span>
+        <span class="xp">${jog.xp} XP</span>
       `;
       container.appendChild(div);
     });
