@@ -2,27 +2,127 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>📘 Questões - Magis Adventure</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+  <title>🧠 Questões - Magis Adventure</title>
+  <style>
+    body {
+      background: linear-gradient(to right, #2c3e50, #4ca1af);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .painel {
+      background-color: rgba(0, 0, 0, 0.75);
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 15px black;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    input {
+      padding: 10px;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      width: 80px;
+      text-align: center;
+    }
+
+    button {
+      padding: 12px 25px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 10px;
+      background-color: #00b4d8;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0096c7;
+    }
+
+    .status {
+      margin-top: 25px;
+      font-size: 18px;
+    }
+
+    .voltar {
+      margin-top: 30px;
+    }
+
+    .voltar a {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #e94560;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .voltar a:hover {
+      background-color: #b42b45;
+    }
+  </style>
 </head>
 <body>
-  <h1>📘 Registro de Questões</h1>
   <div class="painel">
-    <div class="entrada">
-      <p>Informe o número de questões feitas e acertos:</p>
-      <input type="number" id="qtdRespondidas" placeholder="Feitas">
-      <input type="number" id="qtdAcertos" placeholder="Acertos">
-      <br>
-      <button onclick="registrarQuestoes()">Registrar</button>
-    </div>
+    <h1>🧠 Registro de Questões</h1>
+    <p>Informe o número de questões feitas e quantas você acertou.</p>
+    <input type="number" id="qtdRespondidas" placeholder="Feitas">
+    <input type="number" id="qtdAcertos" placeholder="Acertos">
+    <br>
+    <button onclick="registrarQuestoes()">Registrar</button>
+
     <div class="status">
       <p>Questões respondidas: <span id="respondidas">0</span></p>
       <p>Acertos: <span id="acertos">0</span></p>
     </div>
+
     <div class="voltar">
       <a href="painel.html">⬅ Voltar ao Painel</a>
     </div>
   </div>
+
+  <script>
+    let respondidas = parseInt(localStorage.getItem("respondidas") || 0);
+    let acertos = parseInt(localStorage.getItem("acertos") || 0);
+
+    document.getElementById("respondidas").textContent = respondidas;
+    document.getElementById("acertos").textContent = acertos;
+
+    function registrarQuestoes() {
+      const audio = new Audio("audio/click.mp3");
+      audio.play();
+
+      const novasRespondidas = parseInt(document.getElementById("qtdRespondidas").value) || 0;
+      const novosAcertos = parseInt(document.getElementById("qtdAcertos").value) || 0;
+
+      respondidas += novasRespondidas;
+      acertos += novosAcertos;
+
+      localStorage.setItem("respondidas", respondidas);
+      localStorage.setItem("acertos", acertos);
+
+      const xpAtual = parseInt(localStorage.getItem("xp") || 0);
+      const xpGanho = (novasRespondidas - novosAcertos) * 5 + novosAcertos * 20;
+      localStorage.setItem("xp", xpAtual + xpGanho);
+
+      document.getElementById("respondidas").textContent = respondidas;
+      document.getElementById("acertos").textContent = acertos;
+
+      document.getElementById("qtdRespondidas").value = "";
+      document.getElementById("qtdAcertos").value = "";
+    }
+  </script>
 </body>
 </html>
