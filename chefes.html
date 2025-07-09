@@ -1,7 +1,163 @@
-<div class="chefe">
-  <img src="img/chefes/constitucio.png" alt="Constitucio">
-  <h3>Constitucio</h3>
-  <p>Guardião da Carta Magna</p>
-  <button onclick="enfrentarChefe('Constitucio', 1)">⚔️ Enfrentar</button>
-  <p id="status-Constitucio">🔒 Bloqueado</p>
-</div>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Chefes Jurídicos - Magis Adventure</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .galeria-chefes {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+    }
+    .chefe {
+      width: 220px;
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 0 10px #ccc;
+      text-align: center;
+    }
+    .chefe img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .chefe button {
+      margin-top: 10px;
+      padding: 8px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .chefe p.status {
+      margin-top: 5px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Chefes Jurídicos</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="personagens.html">Personagens</a></li>
+        <li><a href="chefes.html">Chefes</a></li>
+        <li><a href="fichas.html">Fichas</a></li>
+        <li><a href="regras.html">Regras</a></li>
+        <li><a href="painel.html">Painel</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="galeria-chefes" id="galeriaChefes">
+      <!-- Chefes serão inseridos por JS -->
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Magis Adventure</p>
+  </footer>
+
+  <script>
+    const dados = JSON.parse(localStorage.getItem("magisDados")) || { xp: 0 };
+    const chefesDerrotados = JSON.parse(localStorage.getItem("chefesDerrotados")) || [];
+
+    const listaChefes = [
+      { nome: "Constitucio", descricao: "Guardião da Carta Magna", nivel: 1 },
+      { nome: "Criminus Rex", descricao: "Senhor das Sombras", nivel: 2 },
+      { nome: "Processus", descricao: "Mestre dos Ritos", nivel: 3 },
+      { nome: "Electoralis", descricao: "Senhor da Democracia", nivel: 4 },
+      { nome: "Administratus", descricao: "Burocrata Supremo", nivel: 5 },
+      { nome: "Civis", descricao: "Patriarca das Relações", nivel: 6 },
+      { nome: "Processus Civilis", descricao: "Mestre da Justiça", nivel: 7 },
+      { nome: "Juvenis", descricao: "Protetor dos Pequenos", nivel: 8 },
+      { nome: "Tributarius", descricao: "Cobrador Eterno", nivel: 9 },
+      { nome: "Empresarius", descricao: "Magnata Jurídico", nivel: 10 },
+      { nome: "Ambientalis", descricao: "Protetor da Natureza", nivel: 11 },
+      { nome: "Internationalis", descricao: "Diplomata Supremo", nivel: 12 },
+      { nome: "Previdencialis", descricao: "Protetor Social", nivel: 13 },
+      { nome: "Economicus", descricao: "Regulador dos Mercados", nivel: 14 },
+      { nome: "Consumidor", descricao: "Protetor dos Vulneráveis", nivel: 15 },
+      { nome: "Humanitas", descricao: "Sábio Filósofo", nivel: 16 },
+      { nome: "Protector Humanus", descricao: "Defensor Universal", nivel: 17 }
+    ];
+
+    function criarCartaoChefe(chefe) {
+      const div = document.createElement("div");
+      div.className = "chefe";
+
+      const img = document.createElement("img");
+      img.src = `img/chefes/${chefe.nome.toLowerCase().replace(/ /g, '')}.png`;
+      img.alt = chefe.nome;
+
+      const h3 = document.createElement("h3");
+      h3.textContent = chefe.nome;
+
+      const p1 = document.createElement("p");
+      p1.textContent = chefe.descricao;
+
+      const botao = document.createElement("button");
+      botao.textContent = "⚔️ Enfrentar";
+      botao.onclick = () => enfrentarChefe(chefe.nome, chefe.nivel);
+
+      const status = document.createElement("p");
+      status.id = `status-${chefe.nome}`;
+      status.className = "status";
+
+      if (chefesDerrotados.includes(chefe.nome)) {
+        status.textContent = "🏆 Derrotado";
+      } else if (Math.floor(dados.xp / 100) + 1 >= chefe.nivel) {
+        status.textContent = "✅ Liberado";
+      } else {
+        status.textContent = "🔒 Bloqueado";
+        botao.disabled = true;
+        botao.style.backgroundColor = "#aaa";
+        botao.style.cursor = "not-allowed";
+      }
+
+      div.appendChild(img);
+      div.appendChild(h3);
+      div.appendChild(p1);
+      div.appendChild(botao);
+      div.appendChild(status);
+
+      return div;
+    }
+
+    function enfrentarChefe(nome, nivelNecessario) {
+      const nivelJogador = Math.floor(dados.xp / 100) + 1;
+
+      if (nivelJogador >= nivelNecessario) {
+        const vitoria = confirm(`Você realizou simulado com nota ≥ 80% contra ${nome}?`);
+        if (vitoria) {
+          alert(`✅ ${nome} derrotado!`);
+          if (!chefesDerrotados.includes(nome)) {
+            chefesDerrotados.push(nome);
+            localStorage.setItem("chefesDerrotados", JSON.stringify(chefesDerrotados));
+            document.getElementById("status-" + nome).textContent = "🏆 Derrotado";
+          }
+        } else {
+          alert("⚠️ Simulado não confirmado. Continue treinando!");
+        }
+      } else {
+        alert("❌ Seu nível ainda não permite enfrentar este chefe.");
+      }
+    }
+
+    function carregarChefes() {
+      const galeria = document.getElementById("galeriaChefes");
+      listaChefes.forEach(chefe => {
+        galeria.appendChild(criarCartaoChefe(chefe));
+      });
+    }
+
+    window.onload = carregarChefes;
+  </script>
+</body>
+</html>
