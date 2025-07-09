@@ -2,61 +2,86 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Registro de Estudo - Magis Adventure</title>
+  <title>📚 Estudar - Magis Adventure</title>
   <style>
     body {
+      background: linear-gradient(to right, #1f2c4c, #0d1a2b);
+      color: white;
       font-family: 'Segoe UI', sans-serif;
-      background: #fdfdfd;
       text-align: center;
       padding: 40px;
     }
 
-    .container {
-      background: #fff;
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .painel {
+      background-color: #112d4e;
+      border-radius: 12px;
       padding: 30px;
-      border-radius: 10px;
-      max-width: 400px;
+      max-width: 500px;
       margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .painel p {
+      font-size: 18px;
+      margin-bottom: 20px;
     }
 
     button {
-      padding: 15px 20px;
+      padding: 12px 30px;
       font-size: 18px;
-      margin-top: 20px;
-      background: #4caf50;
+      background-color: #3f72af;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
+      transition: background 0.3s;
     }
 
     button:hover {
-      background: #388e3c;
+      background-color: #2e5c9a;
     }
 
-    #xpGanho {
-      margin-top: 20px;
-      font-size: 18px;
-      color: #333;
+    .voltar {
+      margin-top: 30px;
+    }
+
+    .voltar a {
+      padding: 10px 20px;
+      background-color: #e94560;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .voltar a:hover {
+      background-color: #b42b45;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>📚 Registro de Estudo</h1>
-    <p>Concluiu uma sessão de 25 minutos de foco?</p>
-    <button onclick="registrarPomodoro()">✔️ Registrar Pomodoro</button>
-    <p id="xpGanho"></p>
-    <button onclick="window.location.href='painel.html'">⬅️ Voltar ao Painel</button>
+  <h1>📚 Estudo Realizado</h1>
+  <div class="painel">
+    <p>Estudo concluído! Clique no botão abaixo para registrar e ganhar XP.</p>
+    <button onclick="ganharXP()">Ganhar XP</button>
+  </div>
+
+  <div class="voltar">
+    <a href="painel.html">⬅ Voltar ao Painel</a>
   </div>
 
   <script>
-    function registrarPomodoro() {
-      let dados = JSON.parse(localStorage.getItem("magisDados")) || { xp: 0, defesa: 0 };
-      dados.xp += 25; // cada pomodoro vale 25 XP
-      localStorage.setItem("magisDados", JSON.stringify(dados));
-      document.getElementById("xpGanho").textContent = `✅ Você ganhou 25 XP! Total atual: ${dados.xp} XP.`;
+    function ganharXP() {
+      const xpAtual = parseInt(localStorage.getItem("xp") || 0);
+      const ganho = 15;
+      const novoXP = xpAtual + ganho;
+      localStorage.setItem("xp", novoXP);
+      alert("Você ganhou " + ganho + " XP por estudar!");
     }
   </script>
 </body>
