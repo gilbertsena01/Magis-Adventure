@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Ranking Pessoal - Magis Adventure</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fdfdfd;
+      padding: 40px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+    .ranking-box {
+      max-width: 400px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+    .ranking-box p {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    #trocarNome {
+      margin-top: 15px;
+      font-size: 14px;
+      cursor: pointer;
+      color: #007BFF;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏆 Ranking Individual</h1>
+  <div class="ranking-box">
+    <p><strong>Jogador:</strong> <span id="nomeJogador"></span></p>
+    <p><strong>Nível:</strong> <span id="nivelJogador"></span></p>
+    <p><strong>XP total:</strong> <span id="xpTotal"></span></p>
+    <p><strong>Chefes derrotados:</strong> <span id="chefesDerrotados"></span> / 17</p>
+    <p><strong>Jornada concluída:</strong> <span id="porcentagem"></span>%</p>
+    <p id="trocarNome" onclick="trocarNome()">Alterar nome do jogador</p>
+  </div>
+
+  <script>
+    const dados = JSON.parse(localStorage.getItem("magisDados")) || { xp: 0 };
+    const derrotados = JSON.parse(localStorage.getItem("chefesDerrotados")) || [];
+    let nome = localStorage.getItem("nomeJogador");
+
+    if (!nome) {
+      nome = prompt("Digite seu nome para registrar no ranking:");
+      localStorage.setItem("nomeJogador", nome);
+    }
+
+    document.getElementById("nomeJogador").textContent = nome;
+    document.getElementById("xpTotal").textContent = dados.xp;
+    document.getElementById("nivelJogador").textContent = Math.floor(dados.xp / 100) + 1;
+    document.getElementById("chefesDerrotados").textContent = derrotados.length;
+    document.getElementById("porcentagem").textContent = Math.floor((derrotados.length / 17) * 100);
+
+    function trocarNome() {
+      const novoNome = prompt("Digite um novo nome:");
+      if (novoNome) {
+        localStorage.setItem("nomeJogador", novoNome);
+        location.reload();
+      }
+    }
+  </script>
+</body>
+</html>
