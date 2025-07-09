@@ -1,30 +1,140 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Painel do Jogador</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #1e3c72, #2a5298);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .painel {
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px black;
+      text-align: center;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    img {
+      border-radius: 50%;
+      width: 100px;
+      margin-bottom: 10px;
+    }
+
+    .barra-xp {
+      background-color: #555;
+      border-radius: 10px;
+      height: 20px;
+      width: 100%;
+      margin: 15px 0;
+      overflow: hidden;
+    }
+
+    .preenchimento {
+      background-color: #00ffcc;
+      height: 100%;
+      width: 0%;
+      transition: width 0.5s;
+    }
+
+    .botoes button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      background-color: #00b4d8;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .botoes button:hover {
+      background-color: #0096c7;
+    }
+
+    .resetar {
+      margin-top: 20px;
+    }
+
+    .resetar button {
+      background-color: #e63946;
+    }
+
+    .resetar button:hover {
+      background-color: #b02a37;
+    }
+  </style>
 </head>
 <body>
-  <div class="painel-container">
-    <h1><span class="emoji">🎮</span> Painel do Jogador</h1>
-    <img src="img/heroi.png" alt="Avatar do Jogador" class="avatar">
-    <p>Nome: <span id="nomeJogador">Jogador</span></p>
+  <div class="painel">
+    <h1>🎮 Painel do Jogador</h1>
+    <img src="img/heroi.png" alt="Jogador" />
+    <p>Nome: Jogador</p>
     <p>Nível: <span id="nivel">1</span></p>
     <p>XP: <span id="xp">0</span></p>
-    <progress id="barraXP" value="0" max="100"></progress>
-    <p>Chefes vencidos: <span id="chefesVencidos">0</span></p>
 
-    <div class="botoes">
-      <button onclick="window.location.href='batalha.html'">⚔️ Batalhar</button>
-      <button onclick="window.location.href='estudar.html'">📚 Estudar</button>
-      <button onclick="window.location.href='questoes.html'">🧠 Resolver Questões</button>
-      <button onclick="window.location.href='mapa.html'">🗺️ Ver Mapa</button>
-      <button onclick="window.location.href='ranking.html'">🏆 Ranking</button>
+    <div class="barra-xp">
+      <div class="preenchimento" id="barraXP"></div>
     </div>
 
-    <button class="resetar" onclick="reiniciarProgresso()">🔁 Reiniciar Progresso</button>
+    <p>Chefes vencidos: <span id="chefes">0</span></p>
+
+    <div class="botoes">
+      <button onclick="navegar('batalha.html')">⚔️ Batalhar</button>
+      <button onclick="navegar('estudar.html')">📚 Estudar</button>
+      <button onclick="navegar('questoes.html')">🧠 Resolver Questões</button>
+      <button onclick="navegar('mapa.html')">🗺️ Ver Mapa</button>
+      <button onclick="navegar('ranking.html')">🏆 Ranking</button>
+    </div>
+
+    <div class="resetar">
+      <button onclick="reiniciar()">🔄 Reiniciar Progresso</button>
+    </div>
   </div>
+
+  <script>
+    function navegar(destino) {
+      new Audio("audio/click.mp3").play();
+      setTimeout(() => {
+        window.location.href = destino;
+      }, 150);
+    }
+
+    function reiniciar() {
+      if (confirm("Tem certeza que deseja reiniciar seu progresso?")) {
+        localStorage.clear();
+        window.location.reload();
+      }
+    }
+
+    // Carregar dados do jogador
+    const xp = parseInt(localStorage.getItem("xp") || 0);
+    const chefes = parseInt(localStorage.getItem("chefesVencidos") || 0);
+    const nivel = Math.floor(xp / 100) + 1;
+    const progresso = (xp % 100);
+
+    document.getElementById("nivel").textContent = nivel;
+    document.getElementById("xp").textContent = xp;
+    document.getElementById("chefes").textContent = chefes;
+    document.getElementById("barraXP").style.width = progresso + "%";
+  </script>
 </body>
 </html>
