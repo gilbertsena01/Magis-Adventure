@@ -2,127 +2,29 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>🎮 Painel do Jogador</title>
-  <style>
-    body {
-      background: radial-gradient(circle at center, #1f2c4c, #0d1a2b);
-      color: white;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 30px;
-    }
-
-    .painel {
-      background-color: #0d1a2b;
-      border-radius: 20px;
-      padding: 30px;
-      max-width: 500px;
-      margin: auto;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    }
-
-    .painel h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
-
-    .painel img {
-      border-radius: 50%;
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      margin-bottom: 15px;
-    }
-
-    .painel p {
-      font-size: 18px;
-      margin: 8px 0;
-    }
-
-    progress {
-      width: 80%;
-      height: 20px;
-      margin-top: 10px;
-      border-radius: 10px;
-      background-color: #2e2e2e;
-    }
-
-    progress::-webkit-progress-bar {
-      background-color: #2e2e2e;
-      border-radius: 10px;
-    }
-
-    progress::-webkit-progress-value {
-      background-color: #3f72af;
-      border-radius: 10px;
-    }
-
-    .botoes {
-      margin-top: 30px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .botoes a {
-      display: block;
-      background-color: #00bcd4;
-      color: white;
-      padding: 12px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-size: 16px;
-      transition: background 0.3s;
-    }
-
-    .botoes a:hover {
-      background-color: #0097a7;
-    }
-
-    .reiniciar {
-      margin-top: 25px;
-    }
-
-    .reiniciar button {
-      padding: 10px 20px;
-      background-color: #e53935;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .reiniciar button:hover {
-      background-color: #b71c1c;
-    }
-  </style>
+  <title>Painel do Jogador</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <div class="painel">
-    <h1>🎮 Painel do Jogador</h1>
-    <img src="img/avatar.png" alt="Avatar do Jogador">
-    <p>Nome: Jogador</p>
+  <div class="painel-container">
+    <h1><span class="emoji">🎮</span> Painel do Jogador</h1>
+    <img src="img/heroi.png" alt="Avatar do Jogador" class="avatar">
+    <p>Nome: <span id="nomeJogador">Jogador</span></p>
     <p>Nível: <span id="nivel">1</span></p>
     <p>XP: <span id="xp">0</span></p>
-    <progress id="barra" value="0" max="100"></progress>
-    <p>Chefes vencidos: <span id="chefes">0</span></p>
+    <progress id="barraXP" value="0" max="100"></progress>
+    <p>Chefes vencidos: <span id="chefesVencidos">0</span></p>
 
     <div class="botoes">
-      <a href="batalha.html">⚔️ Batalhar</a>
-      <a href="estudar.html">📚 Estudar</a>
-      <a href="questoes.html">🧠 Resolver Questões</a>
-      <a href="mapa.html">🗺️ Ver Mapa</a>
-      <a href="ranking.html">🏆 Ranking</a>
+      <button onclick="window.location.href='batalha.html'">⚔️ Batalhar</button>
+      <button onclick="window.location.href='estudar.html'">📚 Estudar</button>
+      <button onclick="window.location.href='questoes.html'">🧠 Resolver Questões</button>
+      <button onclick="window.location.href='mapa.html'">🗺️ Ver Mapa</button>
+      <button onclick="window.location.href='ranking.html'">🏆 Ranking</button>
     </div>
 
-    <div class="reiniciar">
-      <button onclick="resetarProgresso()">🔄 Reiniciar Progresso</button>
-    </div>
+    <button class="resetar" onclick="reiniciarProgresso()">🔁 Reiniciar Progresso</button>
   </div>
-
-  <script>
-    function atualizarPainel() {
-      const xp = parseInt(localStorage.getItem("xp") || 0);
-      const nivel = Math.floor(xp / 100) + 1;
-      const progresso
+</body>
+</html>
