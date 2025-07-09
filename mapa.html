@@ -2,102 +2,89 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Mapa de Progressão - Magis Adventure</title>
+  <title>🗺️ Mapa de Progresso - Magis Adventure</title>
   <style>
     body {
-      background: linear-gradient(to bottom right, #1b263b, #415a77);
-      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43);
       color: white;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
       text-align: center;
-      margin: 0;
-      padding: 0;
     }
 
     h1 {
-      margin-top: 30px;
+      margin-bottom: 30px;
     }
 
-    #linha-do-tempo {
+    .mapa {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      margin: 40px;
       gap: 20px;
     }
 
-    .chefe-item {
+    .chefe {
       width: 120px;
-      height: 120px;
-      background-color: #0d1b2a;
-      border-radius: 15px;
-      box-shadow: 0 0 10px #00000099;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      padding: 10px;
+      background-color: #112d4e;
+      border-radius: 12px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.4);
     }
 
-    .chefe-item img {
-      max-width: 100px;
-      max-height: 100px;
-      border-radius: 10px;
+    .chefe img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .chefe.vencido {
+      border: 3px solid #00ff99;
+    }
+
+    .voltar {
+      margin-top: 30px;
+    }
+
+    .voltar a {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #e94560;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .voltar a:hover {
+      background-color: #b42b45;
     }
   </style>
 </head>
 <body>
-  <h1>🗺️ Jornada do Magis</h1>
-  <div id="linha-do-tempo"></div>
+  <h1>🗺️ Mapa de Progresso</h1>
+  <div class="mapa" id="mapa"></div>
+  <div class="voltar">
+    <a href="painel.html">⬅ Voltar ao Painel</a>
+  </div>
 
   <script>
     const chefes = [
-      { nome: "Constitucio, O Guardião dos Direitos" },
-      { nome: "Criminus Rex, O Senhor das Sombras" },
-      { nome: "Processus, O Mestre dos Ritos" },
-      { nome: "Electoralis, O Senhor da Democracia" },
-      { nome: "Administratus, O Burocrata Supremo" },
-      { nome: "Civis, O Patriarca das Relações" },
-      { nome: "Processus Civilis, O Mestre da Justiça" },
-      { nome: "Juvenis, O Protetor dos Pequenos" },
-      { nome: "Tributarius, O Cobrador Eterno" },
-      { nome: "Empresarius, O Magnata Jurídico" },
-      { nome: "Ambientalis, O Protetor da Natureza" },
-      { nome: "Internationalis, O Diplomata Supremo" },
-      { nome: "Previdencialis, O Protetor Social" },
-      { nome: "Economicus, O Regulador dos Mercados" },
-      { nome: "Consumidor, O Protetor dos Vulneráveis" },
-      { nome: "Humanitas, O Sábio Filósofo" },
-      { nome: "Protector Humanus, O Defensor Universal" }
+      "constitucio", "criminusrex", "processus", "electoralis", "administratus",
+      "civis", "processuscivilis", "juvenis", "tributarius", "empresarius",
+      "ambientalis", "internationalis", "previdencialis", "economicus",
+      "consumidor", "humanitas", "protectorhumanus"
     ];
 
-    function gerarNomeArquivoImagem(nomeChefe) {
-      return nomeChefe
-        .normalize("NFD").replace(/[̀-ͯ]/g, "")
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, "");
-    }
+    const vencidos = parseInt(localStorage.getItem("chefesVencidos") || 0);
+    const container = document.getElementById("mapa");
 
-    function carregarImagemChefe(chefe, callback) {
-      const nomeArquivo = gerarNomeArquivoImagem(chefe.nome);
-      const caminho = `img/chefes/${nomeArquivo}.png`;
-
-      const img = new Image();
-      img.src = caminho;
-      img.onload = () => callback(img);
-      img.onerror = () => {
-        const fallback = new Image();
-        fallback.src = "img/chefes/desconhecido.png";
-        callback(fallback);
-      };
-    }
-
-    chefes.forEach(chefe => {
-      carregarImagemChefe(chefe, (img) => {
-        const container = document.createElement('div');
-        container.classList.add("chefe-item");
-        container.title = chefe.nome;
-        container.appendChild(img);
-        document.getElementById("linha-do-tempo").appendChild(container);
-      });
+    chefes.forEach((nome, index) => {
+      const bloco = document.createElement("div");
+      bloco.className = "chefe" + (index < vencidos ? " vencido" : "");
+      const img = document.createElement("img");
+      img.src = `img/chefes/${nome}.png`;
+      img.alt = nome;
+      bloco.appendChild(img);
+      container.appendChild(bloco);
     });
   </script>
 </body>
