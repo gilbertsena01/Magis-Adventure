@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Questões - Magis Adventure</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fdfdfd;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input[type="number"] {
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 15px 20px;
+      font-size: 18px;
+      margin-top: 20px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0d47a1;
+    }
+
+    #xpResultado {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>❓ Registro de Questões</h1>
+    <p>Quantas questões você acertou hoje?</p>
+    <input type="number" id="qtd" placeholder="Ex: 15" min="1">
+    <button onclick="registrarQuestoes()">✔️ Registrar</button>
+    <p id="xpResultado"></p>
+    <button onclick="window.location.href='painel.html'">⬅️ Voltar ao Painel</button>
+  </div>
+
+  <script>
+    function registrarQuestoes() {
+      const qtd = parseInt(document.getElementById("qtd").value);
+      if (isNaN(qtd) || qtd <= 0) {
+        alert("Digite uma quantidade válida.");
+        return;
+      }
+
+      let dados = JSON.parse(localStorage.getItem("magisDados")) || { xp: 0, defesa: 0 };
+      const ganho = qtd * 2; // Cada questão = 2 XP
+      dados.xp += ganho;
+      localStorage.setItem("magisDados", JSON.stringify(dados));
+
+      document.getElementById("xpResultado").textContent = `✅ Você ganhou ${ganho} XP! Total atual: ${dados.xp} XP.`;
+    }
+  </script>
+</body>
+</html>
