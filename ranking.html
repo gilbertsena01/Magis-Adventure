@@ -3,91 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <title>🏆 Ranking - Magis Adventure</title>
-  <style>
-    body {
-      background: linear-gradient(to right, #141e30, #243b55);
-      color: white;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .painel {
-      background-color: #112d4e;
-      padding: 30px;
-      border-radius: 15px;
-      max-width: 600px;
-      margin: auto;
-      box-shadow: 0 0 12px rgba(0,0,0,0.6);
-    }
-
-    h1 {
-      margin-bottom: 20px;
-    }
-
-    .progresso {
-      background-color: #ddd;
-      border-radius: 20px;
-      height: 20px;
-      width: 100%;
-      margin-top: 10px;
-      overflow: hidden;
-    }
-
-    .barra {
-      background-color: #00ff88;
-      height: 100%;
-      width: 0%;
-      transition: width 0.4s ease-in-out;
-    }
-
-    .info {
-      margin-top: 20px;
-      font-size: 18px;
-    }
-
-    .voltar a {
-      display: inline-block;
-      margin-top: 30px;
-      padding: 10px 20px;
-      background-color: #e94560;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-
-    .voltar a:hover {
-      background-color: #b42b45;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <h1>🏆 Seu Desempenho</h1>
   <div class="painel">
-    <h2>Jogador</h2>
-    <div class="info">
-      <p>Nível: <span id="nivel">0</span></p>
-      <p>XP Total: <span id="xpTotal">0</span></p>
-    </div>
-    <div class="progresso">
-      <div class="barra" id="barraXP"></div>
-    </div>
+    <h1>🏆 Ranking de Jogadores</h1>
+    <table id="tabelaRanking">
+      <thead>
+        <tr>
+          <th>Posição</th>
+          <th>Nome</th>
+          <th>Nível</th>
+          <th>XP</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Conteúdo gerado por JavaScript -->
+      </tbody>
+    </table>
     <div class="voltar">
       <a href="painel.html">⬅ Voltar ao Painel</a>
     </div>
   </div>
-
-  <script>
-    const xp = parseInt(localStorage.getItem("xp") || 0);
-    const xpPorNivel = 100;
-    const nivel = Math.floor(xp / xpPorNivel);
-    const restoXP = xp % xpPorNivel;
-    const porcentagem = (restoXP / xpPorNivel) * 100;
-
-    document.getElementById("nivel").textContent = nivel;
-    document.getElementById("xpTotal").textContent = xp;
-    document.getElementById("barraXP").style.width = porcentagem + "%";
-  </script>
 </body>
 </html>
