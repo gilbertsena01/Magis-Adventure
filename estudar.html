@@ -1,94 +1,183 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>📚 Estudar - Magis Adventure</title>
+  <meta charset="UTF-8" />
+  <title>📚 Estudo - Magis Adventure</title>
   <style>
     body {
-      background: linear-gradient(to right, #1e3c72, #2a5298);
-      color: white;
+      margin: 0; padding: 0;
       font-family: 'Segoe UI', sans-serif;
+      background: url('img/fundo_painel.png') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
       text-align: center;
       padding: 40px;
     }
-
-    .container {
-      background-color: rgba(0, 0, 0, 0.7);
+    .painel {
+      background: rgba(0,0,0,0.75);
+      max-width: 600px;
+      margin: auto;
       border-radius: 12px;
       padding: 30px;
-      max-width: 500px;
-      margin: auto;
       box-shadow: 0 0 15px black;
     }
-
-    h1 {
-      margin-bottom: 20px;
-    }
-
-    button {
-      background-color: #00b4d8;
-      border: none;
-      border-radius: 10px;
+    h1 { margin-bottom: 20px; }
+    .info-data { font-size: 16px; margin-bottom: 20px; }
+    .botoes button {
+      margin: 10px;
       padding: 12px 25px;
-      font-size: 18px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #00b4d8;
       color: white;
       cursor: pointer;
       transition: background 0.3s;
-      margin-top: 20px;
     }
-
-    button:hover {
-      background-color: #0096c7;
-    }
-
-    .mensagem {
+    .botoes button:hover { background: #0096c7; }
+    .status-estudo {
       margin-top: 25px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #fcd34d;
+      font-size: 18px;
+      line-height: 1.5;
     }
-
+    .status-estudo span { font-weight: bold; }
+    .status-ind {
+      margin-top: 30px;
+      font-size: 18px;
+    }
     .voltar {
       margin-top: 30px;
     }
-
     .voltar a {
       display: inline-block;
       padding: 10px 20px;
-      background-color: #e94560;
+      background: #e94560;
       color: white;
       text-decoration: none;
       border-radius: 8px;
-      font-size: 16px;
+      transition: background 0.3s;
     }
-
-    .voltar a:hover {
-      background-color: #b42b45;
-    }
+    .voltar a:hover { background: #b42b45; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>📚 Sessão de Estudo</h1>
-    <p>Estude por pelo menos 25 minutos e depois clique no botão abaixo.</p>
-    <button onclick="registrarEstudo()">✅ Estudei Agora</button>
-    <div class="mensagem" id="mensagemEstudo"></div>
+  <div class="painel">
+    <h1>📚 Sessão de Estudos</h1>
+    <div class="info-data">Data: <span id="dataHoje"></span></div>
+
+    <div class="botoes">
+      <button id="btnDout">Dout 30m</button>
+      <button id="btnJuris">Juris 30m</button>
+      <button id="btnLei">Lei 30m</button>
+    </div>
+
+    <div class="status-estudo">
+      Doutorado: <span id="minDout">0</span> min (<span id="hDout">0</span>h <span id="mDout">0</span>m)<br>
+      Jurisprudência: <span id="minJuris">0</span> min (<span id="hJuris">0</span>h <span id="mJuris">0</span>m)<br>
+      Lei: <span id="minLei">0</span> min (<span id="hLei">0</span>h <span id="mLei">0</span>m)<br>
+      <strong>Total hoje:</strong> <span id="minTotal">0</span> min (<span id="hTotal">0</span>h <span id="mTotal">0</span>m)
+    </div>
+
+    <div class="status-ind">
+      🗡️ QCs: <span id="qcs">0</span> ✨ Força: <span id="forca">0</span>
+    </div>
+
     <div class="voltar">
-      <a href="painel.html">⬅ Voltar ao Painel</a>
+      <a onclick="playClick()" href="painel.html">⬅ Voltar ao Painel</a>
     </div>
   </div>
 
+  <audio id="click" src="audio/click.mp3"></audio>
+  <audio id="musica" src="audio/tema.mp3" autoplay loop></audio>
+
   <script>
-    function registrarEstudo() {
-      const audio = new Audio("audio/click.mp3");
-      audio.play();
-
-      const xpAtual = parseInt(localStorage.getItem("xp") || 0);
-      const novoXP = xpAtual + 30;
-      localStorage.setItem("xp", novoXP);
-
-      document.getElementById("mensagemEstudo").textContent = "🎓 Você ganhou 30 XP por estudar!";
+    function playClick() {
+      const c = document.getElementById("click");
+      c.currentTime = 0; c.play();
     }
+
+    // Definir data de hoje
+    const hoje = new Date().toISOString().split("T")[0];
+    document.getElementById("dataHoje").textContent = hoje;
+
+    // Se mudou de dia, resetar estatísticas diárias
+    if (localStorage.getItem("estudo_data") !== hoje) {
+      localStorage.setItem("estudo_data", hoje);
+      localStorage.setItem("estudo_dout", 0);
+      localStorage.setItem("estudo_juris", 0);
+      localStorage.setItem("estudo_lei", 0);
+    }
+
+    // Carregar valores
+    let dout = parseInt(localStorage.getItem("estudo_dout") || 0);
+    let juris = parseInt(localStorage.getItem("estudo_juris") || 0);
+    let lei   = parseInt(localStorage.getItem("estudo_lei")   || 0);
+    let qcs   = parseInt(localStorage.getItem("qcs")          || 0);
+    let forca = parseInt(localStorage.getItem("forca")        || 0);
+    let xp    = parseInt(localStorage.getItem("xp")           || 0);
+
+    // Atualizar exibição
+    function atualizar() {
+      // minutos e horas por categoria
+      function toHrsMins(m) {
+        const h = Math.floor(m/60);
+        const mm = m%60;
+        return [h, mm];
+      }
+      const [hD,mD] = toHrsMins(dout);
+      const [hJ,mJ] = toHrsMins(juris);
+      const [hL,mL] = toHrsMins(lei);
+      const total = dout + juris + lei;
+      const [hT,mT] = toHrsMins(total);
+
+      document.getElementById("minDout").textContent = dout;
+      document.getElementById("hDout").textContent = hD;
+      document.getElementById("mDout").textContent = mD;
+
+      document.getElementById("minJuris").textContent = juris;
+      document.getElementById("hJuris").textContent = hJ;
+      document.getElementById("mJuris").textContent = mJ;
+
+      document.getElementById("minLei").textContent   = lei;
+      document.getElementById("hLei").textContent   = hL;
+      document.getElementById("mLei").textContent   = mL;
+
+      document.getElementById("minTotal").textContent = total;
+      document.getElementById("hTotal").textContent   = hT;
+      document.getElementById("mTotal").textContent   = mT;
+
+      document.getElementById("qcs").textContent     = qcs;
+      document.getElementById("forca").textContent   = forca;
+    }
+
+    // Função geral de registro
+    function registrar(categoria) {
+      playClick();
+      if (categoria === "dout") {
+        dout += 30; localStorage.setItem("estudo_dout", dout);
+      } else if (categoria === "juris") {
+        juris += 30; localStorage.setItem("estudo_juris", juris);
+      } else if (categoria === "lei") {
+        lei += 30; localStorage.setItem("estudo_lei", lei);
+      }
+      // incrementos
+      forca += 10; localStorage.setItem("forca", forca);
+      xp    += 20; localStorage.setItem("xp", xp);
+      atualizar();
+    }
+
+    // Botões
+    document.getElementById("btnDout").onclick  = () => registrar("dout");
+    document.getElementById("btnJuris").onclick = () => registrar("juris");
+    document.getElementById("btnLei").onclick   = () => registrar("lei");
+
+    // Iniciar música após clique
+    window.addEventListener("click", () => {
+      const m = document.getElementById("musica");
+      if (m.paused) m.play();
+    });
+
+    atualizar();
   </script>
 </body>
 </html>
