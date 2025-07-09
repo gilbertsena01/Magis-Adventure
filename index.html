@@ -8,7 +8,8 @@
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom right, #0d1b2a, #1b263b);
+      background: url('img/fundo_batalha.jpg') no-repeat center center fixed;
+      background-size: cover;
       color: #fff;
       display: flex;
       flex-direction: column;
@@ -16,6 +17,21 @@
       justify-content: center;
       height: 100vh;
       overflow: hidden;
+      position: relative;
+    }
+
+    .overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6); /* escurece a imagem */
+      z-index: 0;
+    }
+
+    .conteudo {
+      position: relative;
+      z-index: 1;
+      text-align: center;
     }
 
     .logo {
@@ -61,19 +77,21 @@
   </style>
 </head>
 <body>
-  <div class="logo">⚖️ Magis Adventure</div>
-  <p>Desafie os chefes. Evolua com estudo. Vença com sabedoria.</p>
+  <div class="overlay"></div>
+  <div class="conteudo">
+    <div class="logo">⚖️ Magis Adventure</div>
+    <p>Desafie os chefes. Evolua com estudo. Vença com sabedoria.</p>
 
-  <button onclick="novoJogo()">🆕 Novo Jogo</button>
-  <button onclick="continuar()">🎮 Continuar</button>
+    <button onclick="novoJogo()">🆕 Novo Jogo</button>
+    <button onclick="continuar()">🎮 Continuar</button>
 
-  <audio id="musica" autoplay loop>
-    <source src="audio/tema.mp3" type="audio/mpeg">
-    Seu navegador não suporta áudio.
-  </audio>
+    <audio id="musica" autoplay loop>
+      <source src="audio/tema.mp3" type="audio/mpeg">
+      Seu navegador não suporta áudio.
+    </audio>
+  </div>
 
   <script>
-    // Autoplay control
     window.addEventListener('click', () => {
       const audio = document.getElementById("musica");
       if (audio.paused) {
