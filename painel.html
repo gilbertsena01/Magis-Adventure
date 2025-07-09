@@ -3,125 +3,133 @@
 <head>
   <meta charset="UTF-8">
   <title>Painel do Jogador - Magis Adventure</title>
-  <link rel="stylesheet" href="style.css">
   <style>
-    .painel {
-      max-width: 600px;
-      margin: 40px auto;
-      padding: 20px;
-      background-color: #f0f0f0;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #ccc;
-    }
-    .painel h2 {
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f4f4f4, #eaeaea);
       text-align: center;
+      padding: 50px;
     }
-    .painel button {
-      margin: 10px 5px;
-      padding: 10px;
-      font-weight: bold;
+
+    h1 {
+      margin-bottom: 30px;
     }
-    .barra-xp {
-      background-color: #ddd;
-      border-radius: 10px;
-      overflow: hidden;
+
+    .painel-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 500px;
+      margin: 0 auto;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+
+    .painel-box p {
+      font-size: 18px;
       margin: 10px 0;
     }
-    .barra-xp-inner {
-      background-color: #4caf50;
+
+    .barra-progresso {
       height: 20px;
-      width: 0%;
-      transition: width 0.5s;
+      background: #ddd;
+      border-radius: 10px;
+      margin: 10px auto;
+      width: 100%;
+      overflow: hidden;
     }
-    .info {
+
+    .barra-preenchida {
+      height: 100%;
+      background: #4caf50;
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    .botoes {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .botoes button {
+      padding: 12px;
       font-size: 16px;
-      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .botoes button:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
 <body>
-  <div class="painel">
-    <h2>⚖️ Painel de Progresso - Magis Adventure</h2>
+  <h1>🎓 Painel do Jogador</h1>
+  <div class="painel-box">
+    <p><strong>Nome:</strong> <span id="nomeJogador"></span></p>
+    <p><strong>Nível:</strong> <span id="nivelJogador"></span></p>
+    <p><strong>XP:</strong> <span id="xpJogador"></span></p>
+    <p><strong>Chefes derrotados:</strong> <span id="chefesDerrotados"></span>/17</p>
 
-    <div class="info">👤 Nome: <span id="nomeJogador">Gilbert Sena</span></div>
-    <div class="info">🎓 Nível: <span id="nivel">1</span></div>
-    <div class="info">🔋 XP: <span id="xpAtual">0</span> / <span id="xpMax">100</span></div>
-    
-    <div class="barra-xp">
-      <div class="barra-xp-inner" id="barraXP"></div>
+    <p><strong>Progresso na Jornada:</strong></p>
+    <div class="barra-progresso">
+      <div class="barra-preenchida" id="progressoBarra"></div>
     </div>
 
-    <div class="info">🍅 Pomodoros estudados: <span id="pomodoros">0</span></div>
-    <div class="info">❓ Questões resolvidas: <span id="questoes">0</span></div>
-    <div class="info">⚔️ Ataque: <span id="ataque">0</span></div>
-    <div class="info">🛡️ Defesa: <span id="defesa">0</span></div>
-
-    <button onclick="registrarPomodoro()">+ Pomodoro</button>
-    <button onclick="registrarQuestoes()">+ 10 Questões</button>
-    <button onclick="revisaoSemanal()">+ Revisão</button>
-    <button onclick="resetar()">🔄 Reset</button>
-
-    <p class="info" id="statusChefe">🔒 Chefe da semana: bloqueado</p>
+    <div class="botoes">
+      <button onclick="window.location.href='estudo.html'">📚 Registrar Estudo</button>
+      <button onclick="window.location.href='questoes.html'">❓ Registrar Questões</button>
+      <button onclick="window.location.href='mapa.html'">🗺️ Ver Mapa de Chefes</button>
+      <button onclick="window.location.href='ranking.html'">🏆 Ver Ranking</button>
+      <button onclick="irParaProximaBatalha()">⚔️ Próxima Batalha</button>
+    </div>
   </div>
 
   <script>
-    const dados = JSON.parse(localStorage.getItem("magisDados")) || {
-      xp: 0,
-      pomodoros: 0,
-      questoes: 0,
-      ataque: 0,
-      defesa: 0
-    };
+    const dados = JSON.parse(localStorage.getItem("magisDados")) || { xp: 0 };
+    const derrotados = JSON.parse(localStorage.getItem("chefesDerrotados")) || [];
+    let nome = localStorage.getItem("nomeJogador");
 
-    const atualizarPainel = () => {
-      let nivel = Math.floor(dados.xp / 100) + 1;
-      let xpAtual = dados.xp % 100;
+    if (!nome) {
+      nome = prompt("Digite seu nome:");
+      localStorage.setItem("nomeJogador", nome);
+    }
 
-      document.getElementById("nivel").textContent = nivel;
-      document.getElementById("xpAtual").textContent = xpAtual;
-      document.getElementById("xpMax").textContent = 100;
-      document.getElementById("barraXP").style.width = `${xpAtual}%`;
+    const nivel = Math.floor(dados.xp / 100) + 1;
+    const progresso = Math.floor((derrotados.length / 17) * 100);
 
-      document.getElementById("pomodoros").textContent = dados.pomodoros;
-      document.getElementById("questoes").textContent = dados.questoes;
-      document.getElementById("ataque").textContent = dados.ataque;
-      document.getElementById("defesa").textContent = dados.defesa;
+    document.getElementById("nomeJogador").textContent = nome;
+    document.getElementById("nivelJogador").textContent = nivel;
+    document.getElementById("xpJogador").textContent = dados.xp;
+    document.getElementById("chefesDerrotados").textContent = derrotados.length;
+    document.getElementById("progressoBarra").style.width = progresso + "%";
 
-      document.getElementById("statusChefe").textContent = 
-        dados.xp >= 100 ? "✅ Chefe da semana: liberado" : "🔒 Chefe da semana: bloqueado";
-    };
-
-    const salvar = () => {
-      localStorage.setItem("magisDados", JSON.stringify(dados));
-      atualizarPainel();
-    };
-
-    const registrarPomodoro = () => {
-      dados.pomodoros++;
-      dados.xp += 10;
-      salvar();
-    };
-
-    const registrarQuestoes = () => {
-      dados.questoes += 10;
-      dados.ataque += 2;
-      salvar();
-    };
-
-    const revisaoSemanal = () => {
-      dados.defesa++;
-      salvar();
-    };
-
-    const resetar = () => {
-      if (confirm("Deseja apagar todo o progresso?")) {
-        localStorage.removeItem("magisDados");
-        location.reload();
+    function irParaProximaBatalha() {
+      const chefes = [
+        "Constitucio", "Criminus Rex", "Processus", "Electoralis",
+        "Administratus", "Civis", "Processus Civilis", "Juvenis",
+        "Tributarius", "Empresarius", "Ambientalis", "Internationalis",
+        "Previdencialis", "Economicus", "Consumidor", "Humanitas",
+        "Protector Humanus"
+      ];
+      const proximo = chefes.find(c => !derrotados.includes(c));
+      if (!proximo) {
+        alert("🎉 Todos os chefes foram derrotados! Parabéns!");
+        return;
       }
-    };
-
-    atualizarPainel();
+      const nivelNecessario = chefes.indexOf(proximo) + 1;
+      if (nivel >= nivelNecessario) {
+        localStorage.setItem("chefeAtual", JSON.stringify({ nome: proximo, nivel: nivelNecessario }));
+        window.location.href = "batalha.html";
+      } else {
+        alert("⚠️ Seu nível ainda é insuficiente para enfrentar o próximo chefe.");
+      }
+    }
   </script>
 </body>
 </html>
-
