@@ -69,14 +69,6 @@
       cursor: pointer; transition: background 0.3s;
     }
     .botoes button:hover { background: #0096c7; }
-
-    .resetar button {
-      margin-top: 15px;
-      background: #e63946; color: white;
-      border: none; padding: 10px 20px;
-      border-radius: 8px; cursor: pointer;
-    }
-    .resetar button:hover { background: #b02a37; }
   </style>
 </head>
 <body>
@@ -109,10 +101,6 @@
       <button onclick="playClick(); window.location.href='mapa.html'">🗺️ Ver Mapa</button>
       <button onclick="playClick(); window.location.href='ranking.html'">🏆 Ranking</button>
     </div>
-
-    <div class="resetar">
-      <button onclick="playClick(); reiniciar()">🔄 Reiniciar Progresso</button>
-    </div>
   </div>
 
   <audio id="click" src="audio/click.mp3"></audio>
@@ -123,16 +111,9 @@
       c.currentTime = 0; c.play();
     }
 
-    function reiniciar() {
-      if (confirm("Reiniciar todo o progresso?")) {
-        localStorage.clear();
-        window.location.reload();
-      }
-    }
-
     // Dados do jogador
     const nome = localStorage.getItem("nomeJogador") || "Jogador";
-    const avatar = localStorage.getItem("avatarJogador") || "heroi.png";
+    const avatar = localStorage.getItem("avatarJogador") || "";
     document.getElementById("nomeUsuario").textContent = nome;
     document.getElementById("avatar").src = "img/" + avatar;
 
@@ -143,7 +124,7 @@
     document.getElementById("nivel").textContent = nivel;
     document.getElementById("barraXP").style.width = (xp % 100) + "%";
 
-    // Saúde/Malhação
+    // Saúde / Malhação diária
     const btnMalha = document.getElementById("btnMalhacao");
     const saudeEl = document.getElementById("saudeStatus");
     const last = parseInt(localStorage.getItem("lastMalhacao") || 0);
