@@ -80,8 +80,8 @@
     </div>
     <div>
       <div class="vida"><div id="vidaChefe" class="barra-vida"></div></div>
-      <img src="img/chefes/constitucio.png" class="personagem" alt="Chefe">
-      <p>Constitucio</p>
+      <img id="imgChefe" class="personagem" alt="Chefe">
+      <p id="nomeChefe"></p>
     </div>
   </div>
 
@@ -90,6 +90,26 @@
   </div>
 
   <script>
+    const chefes = [
+      { nome: "Constitucio", img: "img/chefes/constitucio.png" },
+      { nome: "Criminus", img: "img/chefes/criminus.png" },
+      { nome: "Processus", img: "img/chefes/processus.png" },
+      { nome: "Electoralis", img: "img/chefes/electoralis.png" },
+      { nome: "Administratus", img: "img/chefes/administratus.png" }
+      // Adicione os demais chefes conforme necessário
+    ];
+
+    const vencidos = JSON.parse(localStorage.getItem("chefesVencidos") || "[]");
+    const proximoChefe = chefes.find(c => !vencidos.includes(c.nome.toLowerCase()));
+
+    if (!proximoChefe) {
+      alert("Você venceu todos os chefes!");
+      window.location.href = "painel.html";
+    }
+
+    document.getElementById("imgChefe").src = proximoChefe.img;
+    document.getElementById("nomeChefe").textContent = proximoChefe.nome;
+
     let vidaJogador = 100;
     let vidaChefe = 100;
     let xpGanho = 50;
@@ -112,17 +132,16 @@
       atualizarBarras();
 
       if (vidaChefe === 0) {
-        alert("Você venceu! +" + xpGanho + " XP!");
+        alert("Você venceu " + proximoChefe.nome + "! +" + xpGanho + " XP!");
         const xpAtual = parseInt(localStorage.getItem("xp") || 0);
         localStorage.setItem("xp", xpAtual + xpGanho);
 
-        let vencidos = JSON.parse(localStorage.getItem("chefesVencidos") || "[]");
-        if (!vencidos.includes("constitucio")) {
-          vencidos.push("constitucio");
+        if (!vencidos.includes(proximoChefe.nome.toLowerCase())) {
+          vencidos.push(proximoChefe.nome.toLowerCase());
           localStorage.setItem("chefesVencidos", JSON.stringify(vencidos));
         }
 
-        setTimeout(() => window.location.href = "painel.html", 1000);
+        setTimeout(() => location.reload(), 1000);
       }
 
       if (vidaJogador === 0) {
