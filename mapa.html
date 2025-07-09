@@ -5,100 +5,139 @@
   <title>🗺️ Mapa - Magis Adventure</title>
   <style>
     body {
-      background: linear-gradient(to right, #373b44, #4286f4);
-      color: white;
+      margin: 0; padding: 40px;
       font-family: 'Segoe UI', sans-serif;
-      padding: 30px;
+      background: url('img/fundo_painel.png') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
       text-align: center;
     }
-
-    h1 {
-      margin-bottom: 30px;
-    }
-
+    h1 { margin-bottom: 20px; }
     .linha-do-tempo {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      max-width: 1000px;
-      margin: auto;
+      display: flex; flex-wrap: wrap;
+      justify-content: center; gap: 20px;
+      max-width: 1000px; margin: auto;
     }
-
     .chefe {
-      background-color: rgba(0, 0, 0, 0.7);
-      border-radius: 12px;
-      padding: 10px;
-      width: 120px;
-      box-shadow: 0 0 10px black;
+      background: rgba(0,0,0,0.7);
+      border-radius: 12px; padding: 10px;
+      width: 140px; cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
     }
-
+    .chefe.vencido { opacity: 0.5; }
+    .chefe.atual { box-shadow: 0 0 10px #00ffcc; transform: scale(1.05); }
+    .chefe.selecionavel:hover { transform: scale(1.05); }
     .chefe img {
-      width: 100%;
-      border-radius: 8px;
-      opacity: 0.3;
-      transition: opacity 0.3s, transform 0.3s;
+      width: 100%; border-radius: 8px;
     }
-
-    .chefe.vencido img {
-      opacity: 1;
-      transform: scale(1.05);
-      border: 2px solid #00ffcc;
+    .chefe .nome {
+      margin-top: 8px; font-size: 14px;
     }
-
     .voltar {
-      margin-top: 40px;
+      margin-top: 30px;
     }
-
     .voltar a {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #e94560;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 16px;
+      display: inline-block; padding: 10px 20px;
+      background: #e94560; color: white;
+      text-decoration: none; border-radius: 8px;
+      transition: background 0.3s;
     }
-
-    .voltar a:hover {
-      background-color: #b42b45;
-    }
+    .voltar a:hover { background: #b42b45; }
+    audio { display: none; }
   </style>
 </head>
 <body>
   <h1>🗺️ Linha do Tempo dos Chefes</h1>
-
   <div class="linha-do-tempo" id="chefesContainer"></div>
-
   <div class="voltar">
-    <a href="painel.html">⬅ Voltar ao Painel</a>
+    <a onclick="playClick()" href="painel.html">⬅ Voltar ao Painel</a>
   </div>
 
+  <audio id="click" src="audio/click.mp3"></audio>
+  <audio id="musica" src="audio/tema.mp3" autoplay loop></audio>
+
   <script>
-    const chefes = [
-      "constitucio", "criminusrex", "processus", "electoralis", "administratus",
-      "civis", "processuscivilis", "juvenis", "tributarius", "empresarius",
-      "ambientalis", "internationalis", "previdencialis", "economicus",
-      "consumidor", "humanitas", "protectorhumanus"
+    // toca clique
+    function playClick() {
+      const c = document.getElementById("click");
+      c.currentTime = 0; c.play();
+    }
+    window.addEventListener('click', ()=> {
+      const m = document.getElementById("musica");
+      if(m.paused) m.play();
+    });
+
+    // lista de bosses
+    const bossIds = [
+      "constitucio","criminusrex","processus","electoralis","administratus",
+      "civis","processuscivilis","juvenis","tributarius","empresarius",
+      "ambientalis","internationalis","previdencialis","economicus",
+      "consumidor","humanitas","protectorhumanus"
+    ];
+    const bossNames = [
+      "Constitucio, O Guardião dos Direitos",
+      "Criminus Rex, O Senhor das Sombras",
+      "Processus, O Mestre dos Ritos",
+      "Electoralis, O Senhor da Democracia",
+      "Administratus, O Burocrata Supremo",
+      "Civis, O Patriarca das Relações",
+      "Processus Civilis, O Mestre da Justiça",
+      "Juvenis, O Protetor dos Pequenos",
+      "Tributarius, O Cobrador Eterno",
+      "Empresarius, O Magnata Jurídico",
+      "Ambientalis, O Protetor da Natureza",
+      "Internationalis, O Diplomata Supremo",
+      "Previdencialis, O Protetor Social",
+      "Economicus, O Regulador dos Mercados",
+      "Consumidor, O Protetor dos Vulneráveis",
+      "Humanitas, O Sábio Filósofo",
+      "Protector Humanus, O Defensor Universal"
     ];
 
-    const vencidos = parseInt(localStorage.getItem("chefesVencidos") || 0);
+    // ler progresso
+    let vencidos = parseInt(localStorage.getItem("chefesVencidos")||0);
+    let atual = parseInt(localStorage.getItem("bossAtual")||-1);
+
+    // se todos vencidos, reiniciar
+    if(vencidos >= bossIds.length) {
+      localStorage.setItem("chefesVencidos",0);
+      localStorage.removeItem("bossAtual");
+      vencidos = 0; atual = -1;
+    }
+    // se bossAtual já vencido, liberar nova escolha
+    if(atual !== -1 && atual < vencidos) {
+      localStorage.removeItem("bossAtual");
+      atual = -1;
+    }
 
     const container = document.getElementById("chefesContainer");
 
-    chefes.forEach((nome, index) => {
+    bossIds.forEach((id,i)=>{
       const div = document.createElement("div");
       div.classList.add("chefe");
-      if (index < vencidos) {
-        div.classList.add("vencido");
+      // destaque vencidos
+      if(i < vencidos) div.classList.add("vencido");
+      // destaque atual
+      if(i === atual) div.classList.add("atual");
+      // clicável se ainda não escolheu e não vencido
+      if(atual===-1 && i>=vencidos){
+        div.classList.add("selecionavel");
+        div.onclick = ()=>{
+          playClick();
+          localStorage.setItem("bossAtual",i);
+          location.reload();
+        };
       }
-
+      // conteúdo
       const img = document.createElement("img");
-      img.src = `img/chefes/${nome}.png`;
-      img.alt = nome;
-
-      div.appendChild(img);
-      container.appendChild(div);
+      img.src = `img/chefes/${id}.png`;
+      img.alt = bossNames[i];
+      const nome = document.createElement("div");
+      nome.classList.add("nome");
+      nome.textContent = bossNames[i];
+      div.append(img,nome);
+      container.append(div);
     });
   </script>
 </body>
