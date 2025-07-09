@@ -5,124 +5,131 @@
   <title>🧠 Questões - Magis Adventure</title>
   <style>
     body {
-      background: linear-gradient(to right, #2c3e50, #4ca1af);
-      color: white;
+      margin: 0; padding: 0;
       font-family: 'Segoe UI', sans-serif;
+      background: url('img/fundo_painel.png') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
       text-align: center;
       padding: 40px;
     }
-
     .painel {
-      background-color: rgba(0, 0, 0, 0.75);
+      background: rgba(0,0,0,0.75);
+      max-width: 700px;
+      margin: auto;
       border-radius: 12px;
       padding: 30px;
-      max-width: 500px;
-      margin: auto;
       box-shadow: 0 0 15px black;
     }
-
-    h1 {
-      margin-bottom: 20px;
+    h1 { margin-bottom: 20px; }
+    .entradas input {
+      width: 100px; padding: 8px;
+      margin: 0 10px 20px;
+      border: none; border-radius: 8px;
+      text-align: center; font-size: 16px;
     }
-
-    input {
-      padding: 10px;
-      margin: 10px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      width: 80px;
-      text-align: center;
+    .entradas button {
+      padding: 10px 20px; font-size: 16px;
+      border: none; border-radius: 8px;
+      background: #00b4d8; color: white;
+      cursor: pointer; transition: background 0.3s;
     }
-
-    button {
-      padding: 12px 25px;
-      margin-top: 20px;
-      border: none;
-      border-radius: 10px;
-      background-color: #00b4d8;
-      color: white;
-      font-size: 18px;
-      cursor: pointer;
+    .entradas button:hover { background: #0096c7; }
+    .stats {
+      text-align: left; margin-top: 30px;
+      font-size: 18px; line-height: 1.5;
     }
-
-    button:hover {
-      background-color: #0096c7;
-    }
-
-    .status {
-      margin-top: 25px;
-      font-size: 18px;
-    }
-
+    .stats span { font-weight: bold; }
     .voltar {
       margin-top: 30px;
     }
-
     .voltar a {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #e94560;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 16px;
+      display: inline-block; padding: 10px 20px;
+      background: #e94560; color: white;
+      text-decoration: none; border-radius: 8px;
+      transition: background 0.3s;
     }
-
-    .voltar a:hover {
-      background-color: #b42b45;
-    }
+    .voltar a:hover { background: #b42b45; }
+    audio { display: none; }
   </style>
 </head>
 <body>
   <div class="painel">
     <h1>🧠 Registro de Questões</h1>
-    <p>Informe o número de questões feitas e quantas você acertou.</p>
-    <input type="number" id="qtdRespondidas" placeholder="Feitas">
-    <input type="number" id="qtdAcertos" placeholder="Acertos">
-    <br>
-    <button onclick="registrarQuestoes()">Registrar</button>
 
-    <div class="status">
-      <p>Questões respondidas: <span id="respondidas">0</span></p>
-      <p>Acertos: <span id="acertos">0</span></p>
+    <div class="entradas">
+      <input type="number" id="inputFeitas" placeholder="Feitas" min="0">
+      <input type="number" id="inputAcertos" placeholder="Acertos" min="0">
+      <button id="btnRegistrar">Registrar</button>
+    </div>
+
+    <div class="stats" id="stats">
+      <!-- Estatísticas serão inseridas aqui -->
     </div>
 
     <div class="voltar">
-      <a href="painel.html">⬅ Voltar ao Painel</a>
+      <a onclick="playClick()" href="painel.html">⬅ Voltar ao Painel</a>
     </div>
   </div>
 
+  <audio id="click" src="audio/click.mp3"></audio>
+  <audio id="musica" src="audio/tema.mp3" autoplay loop></audio>
+
   <script>
-    let respondidas = parseInt(localStorage.getItem("respondidas") || 0);
-    let acertos = parseInt(localStorage.getItem("acertos") || 0);
-
-    document.getElementById("respondidas").textContent = respondidas;
-    document.getElementById("acertos").textContent = acertos;
-
-    function registrarQuestoes() {
-      const audio = new Audio("audio/click.mp3");
-      audio.play();
-
-      const novasRespondidas = parseInt(document.getElementById("qtdRespondidas").value) || 0;
-      const novosAcertos = parseInt(document.getElementById("qtdAcertos").value) || 0;
-
-      respondidas += novasRespondidas;
-      acertos += novosAcertos;
-
-      localStorage.setItem("respondidas", respondidas);
-      localStorage.setItem("acertos", acertos);
-
-      const xpAtual = parseInt(localStorage.getItem("xp") || 0);
-      const xpGanho = (novasRespondidas - novosAcertos) * 5 + novosAcertos * 20;
-      localStorage.setItem("xp", xpAtual + xpGanho);
-
-      document.getElementById("respondidas").textContent = respondidas;
-      document.getElementById("acertos").textContent = acertos;
-
-      document.getElementById("qtdRespondidas").value = "";
-      document.getElementById("qtdAcertos").value = "";
+    // Função de som
+    function playClick() {
+      const c = document.getElementById("click");
+      c.currentTime = 0; c.play();
     }
+    // Inicializa música após clique
+    window.addEventListener('click', () => {
+      const m = document.getElementById("musica");
+      if(m.paused) m.play();
+    });
+
+    // Recupera log de questões
+    let log = JSON.parse(localStorage.getItem("questoesLog") || "[]");
+
+    const btn = document.getElementById("btnRegistrar");
+    btn.addEventListener('click', () => {
+      playClick();
+      const feitas = parseInt(document.getElementById("inputFeitas").value) || 0;
+      const acertos = parseInt(document.getElementById("inputAcertos").value) || 0;
+      if(feitas < acertos) {
+        alert("Acertos não podem exceder questões feitas.");
+        return;
+      }
+      // adiciona entrada
+      log.push({ t: Date.now(), f: feitas, a: acertos });
+      localStorage.setItem("questoesLog", JSON.stringify(log));
+      document.getElementById("inputFeitas").value = "";
+      document.getElementById("inputAcertos").value = "";
+      atualizarStats();
+    });
+
+    function atualizarStats() {
+      const now = Date.now();
+      const oneDay = 24*3600*1000;
+      const oneWeek = 7*oneDay;
+      const oneMonth = 30*oneDay;
+      let dF=0, dA=0, wF=0, wA=0, mF=0, mA=0, tF=0, tA=0;
+      log.forEach(entry => {
+        const delta = now - entry.t;
+        tF += entry.f; tA += entry.a;
+        if(delta < oneDay) { dF += entry.f; dA += entry.a; }
+        if(delta < oneWeek){ wF += entry.f; wA += entry.a; }
+        if(delta < oneMonth){ mF += entry.f; mA += entry.a; }
+      });
+      document.getElementById("stats").innerHTML = `
+        Diário: <span>${dF}</span> feitas, <span>${dA}</span> acertos<br>
+        Semanal: <span>${wF}</span> feitas, <span>${wA}</span> acertos<br>
+        Mensal: <span>${mF}</span> feitas, <span>${mA}</span> acertos<br>
+        Total: <span>${tF}</span> feitas, <span>${tA}</span> acertos
+      `;
+    }
+
+    // Executa na carga
+    atualizarStats();
   </script>
 </body>
 </html>
