@@ -2,74 +2,92 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Ranking Pessoal - Magis Adventure</title>
+  <title>🏆 Ranking - Magis Adventure</title>
   <style>
     body {
+      background: linear-gradient(to right, #141e30, #243b55);
+      color: white;
       font-family: 'Segoe UI', sans-serif;
-      background: #fdfdfd;
-      padding: 40px;
       text-align: center;
+      padding: 20px;
     }
+
+    .painel {
+      background-color: #112d4e;
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 0 12px rgba(0,0,0,0.6);
+    }
+
     h1 {
-      font-size: 32px;
       margin-bottom: 20px;
     }
-    .ranking-box {
-      max-width: 400px;
-      margin: 0 auto;
-      background: #fff;
-      border-radius: 10px;
-      padding: 25px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.1);
-      text-align: left;
+
+    .progresso {
+      background-color: #ddd;
+      border-radius: 20px;
+      height: 20px;
+      width: 100%;
+      margin-top: 10px;
+      overflow: hidden;
     }
-    .ranking-box p {
+
+    .barra {
+      background-color: #00ff88;
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s ease-in-out;
+    }
+
+    .info {
+      margin-top: 20px;
       font-size: 18px;
-      margin: 10px 0;
     }
-    #trocarNome {
-      margin-top: 15px;
-      font-size: 14px;
-      cursor: pointer;
-      color: #007BFF;
-      text-decoration: underline;
+
+    .voltar a {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 10px 20px;
+      background-color: #e94560;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .voltar a:hover {
+      background-color: #b42b45;
     }
   </style>
 </head>
 <body>
-  <h1>🏆 Ranking Individual</h1>
-  <div class="ranking-box">
-    <p><strong>Jogador:</strong> <span id="nomeJogador"></span></p>
-    <p><strong>Nível:</strong> <span id="nivelJogador"></span></p>
-    <p><strong>XP total:</strong> <span id="xpTotal"></span></p>
-    <p><strong>Chefes derrotados:</strong> <span id="chefesDerrotados"></span> / 17</p>
-    <p><strong>Jornada concluída:</strong> <span id="porcentagem"></span>%</p>
-    <p id="trocarNome" onclick="trocarNome()">Alterar nome do jogador</p>
+  <h1>🏆 Seu Desempenho</h1>
+  <div class="painel">
+    <h2>Jogador</h2>
+    <div class="info">
+      <p>Nível: <span id="nivel">0</span></p>
+      <p>XP Total: <span id="xpTotal">0</span></p>
+    </div>
+    <div class="progresso">
+      <div class="barra" id="barraXP"></div>
+    </div>
+    <div class="voltar">
+      <a href="painel.html">⬅ Voltar ao Painel</a>
+    </div>
   </div>
 
   <script>
-    const dados = JSON.parse(localStorage.getItem("magisDados")) || { xp: 0 };
-    const derrotados = JSON.parse(localStorage.getItem("chefesDerrotados")) || [];
-    let nome = localStorage.getItem("nomeJogador");
+    const xp = parseInt(localStorage.getItem("xp") || 0);
+    const xpPorNivel = 100;
+    const nivel = Math.floor(xp / xpPorNivel);
+    const restoXP = xp % xpPorNivel;
+    const porcentagem = (restoXP / xpPorNivel) * 100;
 
-    if (!nome) {
-      nome = prompt("Digite seu nome para registrar no ranking:");
-      localStorage.setItem("nomeJogador", nome);
-    }
-
-    document.getElementById("nomeJogador").textContent = nome;
-    document.getElementById("xpTotal").textContent = dados.xp;
-    document.getElementById("nivelJogador").textContent = Math.floor(dados.xp / 100) + 1;
-    document.getElementById("chefesDerrotados").textContent = derrotados.length;
-    document.getElementById("porcentagem").textContent = Math.floor((derrotados.length / 17) * 100);
-
-    function trocarNome() {
-      const novoNome = prompt("Digite um novo nome:");
-      if (novoNome) {
-        localStorage.setItem("nomeJogador", novoNome);
-        location.reload();
-      }
-    }
+    document.getElementById("nivel").textContent = nivel;
+    document.getElementById("xpTotal").textContent = xp;
+    document.getElementById("barraXP").style.width = porcentagem + "%";
   </script>
 </body>
 </html>
