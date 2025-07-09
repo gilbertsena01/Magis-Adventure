@@ -43,7 +43,7 @@
       display: flex; justify-content: space-around;
       margin: 20px 0; font-size: 18px;
     }
-    /* animações */
+    /* animations */
     @keyframes shake {
       0% { transform: translate(0,0); }
       20% { transform: translate(-5px,5px); }
@@ -53,13 +53,13 @@
       100% { transform: translate(0,0); }
     }
     @keyframes confetti {
-      0% { background-position: 0 0; }
-      100% { background-position: 100% 100%; }
+      0% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-50px); }
     }
     .shake { animation: shake 0.6s; }
-    .confetti::before {
-      content: "🎉"; position: absolute; font-size: 5rem;
-      top: 20%; left: 45%; animation: confetti 1s infinite;
+    .confetti::after {
+      content: "🎉"; position: absolute; font-size: 4rem;
+      top: 20%; left: 45%; animation: confetti 1s ease-out;
     }
   </style>
 </head>
@@ -74,8 +74,8 @@
     </div>
 
     <div class="status-ind">
-      <div>🗡️ QCs: <span id="qcs">0</span></div>
-      <div>✨ Força: <span id="forca">0</span></div>
+      🗡️ QCs: <span id="qcs">0</span>
+      ✨ Força: <span id="forca">0</span>
     </div>
 
     <div class="botoes">
@@ -101,91 +101,123 @@
   <audio id="click" src="audio/click.mp3"></audio>
 
   <script>
-    // sons
+    // Efeito de clique
     function playClick() {
       const c = document.getElementById("click");
       c.currentTime = 0; c.play();
     }
+    // Iniciar música ao primeiro clique
+    window.addEventListener('click', () => {
+      const m = document.getElementById("musica");
+      if (m.paused) m.play();
+    });
 
-    // dados iniciais
-    const nome  = localStorage.getItem("nomeJogador")   || "Jogador";
-    const avatar= localStorage.getItem("avatarJogador") || "heroi.png";
-    const qcs   = parseInt(localStorage.getItem("qcs")  || 0);
-    const forca = parseInt(localStorage.getItem("forca")|| 0);
-    const chefes = [
-      "Constitucio","Criminus Rex","Processus","Electoralis","Administratus",
-      "Civis","Processus Civilis","Juvenis","Tributarius","Empresarius",
-      "Ambientalis","Internationalis","Previdencialis","Economicus",
-      "Consumidor","Humanitas","Protector Humanus"
-    ];
-    let vencidos = parseInt(localStorage.getItem("chefesVencidos")||0);
-    let bossIdx = vencidos % chefes.length;
-    let bossName = chefes[bossIdx];
-    
-    // exibir dados
+    // Dados do jogador
+    const nome      = localStorage.getItem("nomeJogador")   || "Jogador";
+    const avatar    = localStorage.getItem("avatarJogador") || "heroi.png";
+    let qcs         = parseInt(localStorage.getItem("qcs")  || 0);
+    let forca       = parseInt(localStorage.getItem("forca")|| 0);
+
+    // Lista de bosses
+    const bossIds   = [ "constitucio","criminusrex","processus","electoralis",
+                        "administratus","civis","processuscivilis","juvenis",
+                        "tributarius","empresarius","ambientalis","internationalis",
+                        "previdencialis","economicus","consumidor","humanitas",
+                        "protectorhumanus" ];
+    const bossNames = [ "Constitucio, O Guardião dos Direitos",
+                        "Criminus Rex, O Senhor das Sombras",
+                        "Processus, O Mestre dos Ritos",
+                        "Electoralis, O Senhor da Democracia",
+                        "Administratus, O Burocrata Supremo",
+                        "Civis, O Patriarca das Relações",
+                        "Processus Civilis, O Mestre da Justiça",
+                        "Juvenis, O Protetor dos Pequenos",
+                        "Tributarius, O Cobrador Eterno",
+                        "Empresarius, O Magnata Jurídico",
+                        "Ambientalis, O Protetor da Natureza",
+                        "Internationalis, O Diplomata Supremo",
+                        "Previdencialis, O Protetor Social",
+                        "Economicus, O Regulador dos Mercados",
+                        "Consumidor, O Protetor dos Vulneráveis",
+                        "Humanitas, O Sábio Filósofo",
+                        "Protector Humanus, O Defensor Universal" ];
+
+    // Qual Boss enfrentar
+    let bossAtual = parseInt(localStorage.getItem("bossAtual"));
+    if (isNaN(bossAtual)) {
+      // não selecionado, tenta pegar por vencidos sequencial
+      let vencidos = parseInt(localStorage.getItem("chefesVencidos")||0);
+      bossAtual = vencidos < bossIds.length ? vencidos : 0;
+      localStorage.setItem("bossAtual", bossAtual);
+    }
+
+    // Exibir dados iniciais
     document.getElementById("nomeUsuario").textContent = nome;
-    document.getElementById("avatar").src = "img/" + avatar;
-    document.getElementById("qcs").textContent = qcs;
-    document.getElementById("forca").textContent = forca;
-    document.getElementById("nomeChefe").textContent = bossName;
-    document.getElementById("imgChefe").src = "img/chefes/" +
-      bossName.toLowerCase().replace(/ /g,'').replace(/rex/,'rex') + ".png";
+    document.getElementById("avatar").src           = "img/" + avatar;
+    document.getElementById("qcs").textContent       = qcs;
+    document.getElementById("forca").textContent     = forca;
+    document.getElementById("nomeChefe").textContent = bossNames[bossAtual];
+    document.getElementById("imgChefe").src          = `img/chefes/${bossIds[bossAtual]}.png`;
 
-    // vida
+    // Vida inicial
     let vidaJog = 100, vidaBoss = 100;
     function atualizarBarras(){
       document.getElementById("vidaJogador").style.width = vidaJog + "%";
-      document.getElementById("vidaChefe").style.width    = vidaBoss+ "%";
+      document.getElementById("vidaChefe").style.width   = vidaBoss+ "%";
     }
     atualizarBarras();
 
+    // Ataques
     function atacarComQCs(){
-      if(qcs<=0) return alert("Sem QCs!");
-      let dano = qcs;
-      vidaBoss = Math.max(0, vidaBoss - dano);
-      localStorage.setItem("qcs", 0);
-      document.getElementById("qcs").textContent = 0;
-      contraAtaque();
+      if(qcs <= 0) return alert("Sem QCs!");
+      vidaBoss = Math.max(0, vidaBoss - qcs);
+      qcs = 0; localStorage.setItem("qcs", qcs);
+      document.getElementById("qcs").textContent = qcs;
+      processarTurno();
     }
 
     function atacarComForca(){
-      if(forca<=0) return alert("Sem Força!");
-      let dano = forca;
-      vidaBoss = Math.max(0, vidaBoss - dano);
-      localStorage.setItem("forca", 0);
-      document.getElementById("forca").textContent = 0;
-      contraAtaque();
+      if(forca <= 0) return alert("Sem Força!");
+      vidaBoss = Math.max(0, vidaBoss - forca);
+      forca = 0; localStorage.setItem("forca", forca);
+      document.getElementById("forca").textContent = forca;
+      processarTurno();
     }
 
-    function contraAtaque(){
+    function processarTurno(){
       atualizarBarras();
-      if(vidaBoss===0){ vencer(); return; }
-      // boss ataca
-      let dano = Math.floor(Math.random()*15)+5;
+      if(vidaBoss === 0){ vencer(); return; }
+      // Contra-ataque do Boss
+      const dano = Math.floor(Math.random()*15)+5;
       vidaJog = Math.max(0, vidaJog - dano);
       atualizarBarras();
-      if(vidaJog===0){ perder(); }
+      if(vidaJog === 0){ perder(); }
     }
 
     function vencer(){
       const cont = document.getElementById("container");
       cont.classList.add("confetti");
       playClick();
-      alert("Você venceu "+ bossName +"! +50 XP");
-      let xp = parseInt(localStorage.getItem("xp")||0)+50;
+      alert(`Você venceu ${bossNames[bossAtual]}! +50 XP`);
+      // atualiza XP e chefes vencidos
+      let xp = parseInt(localStorage.getItem("xp")||0) + 50;
+      let vencidos = parseInt(localStorage.getItem("chefesVencidos")||0) + 1;
       localStorage.setItem("xp", xp);
-      localStorage.setItem("chefesVencidos", vencidos+1);
+      localStorage.setItem("chefesVencidos", vencidos);
+      // libera nova escolha
+      localStorage.removeItem("bossAtual");
     }
 
     function perder(){
       const cont = document.getElementById("container");
       cont.classList.add("shake");
       playClick();
-      alert("Você foi derrotado por "+ bossName +"!");
+      alert(`Você foi derrotado por ${bossNames[bossAtual]}!`);
+      // mantém bossAtual para tentar de novo
     }
 
     function fugir(){
-      window.location.href="painel.html";
+      window.location.href = "painel.html";
     }
   </script>
 </body>
