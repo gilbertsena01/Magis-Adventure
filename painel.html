@@ -2,158 +2,127 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Painel do Jogador - Magis Adventure</title>
+  <title>🎮 Painel do Jogador</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(to bottom right, #1b263b, #415a77);
-      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at center, #1f2c4c, #0d1a2b);
       color: white;
+      font-family: 'Segoe UI', sans-serif;
       text-align: center;
-    }
-
-    h1 {
-      margin-top: 30px;
-      animation: fadeIn 2s ease-in-out;
+      padding: 30px;
     }
 
     .painel {
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #0d1b2a;
-      border-radius: 15px;
+      background-color: #0d1a2b;
+      border-radius: 20px;
       padding: 30px;
-      box-shadow: 0 0 20px #00000099;
-      animation: fadeInUp 1.5s ease-in-out;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
     }
 
-    .info {
-      font-size: 18px;
-      margin-bottom: 20px;
+    .painel h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
     }
 
-    .avatar {
-      width: 80px;
-      height: 80px;
+    .painel img {
       border-radius: 50%;
-      background: url('img/avatar.png') center/cover no-repeat;
-      margin: 0 auto 20px;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin-bottom: 15px;
     }
 
-    .barra-xp {
-      height: 20px;
-      background-color: #ccc;
-      border-radius: 10px;
-      overflow: hidden;
-      margin: 10px auto 20px;
+    .painel p {
+      font-size: 18px;
+      margin: 8px 0;
+    }
+
+    progress {
       width: 80%;
+      height: 20px;
+      margin-top: 10px;
+      border-radius: 10px;
+      background-color: #2e2e2e;
     }
 
-    .xp-preenchido {
-      height: 100%;
-      background-color: #00b4d8;
-      width: 0%;
-      transition: width 1s;
+    progress::-webkit-progress-bar {
+      background-color: #2e2e2e;
+      border-radius: 10px;
+    }
+
+    progress::-webkit-progress-value {
+      background-color: #3f72af;
+      border-radius: 10px;
+    }
+
+    .botoes {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
     }
 
     .botoes a {
       display: block;
-      background: #00b4d8;
+      background-color: #00bcd4;
       color: white;
-      margin: 10px auto;
-      padding: 12px 20px;
-      width: 200px;
+      padding: 12px;
       border-radius: 10px;
       text-decoration: none;
-      transition: background 0.3s, transform 0.3s;
+      font-size: 16px;
+      transition: background 0.3s;
     }
 
     .botoes a:hover {
-      background: #0096c7;
-      transform: scale(1.05);
+      background-color: #0097a7;
     }
 
-    button {
-      margin-top: 20px;
-      background: #d62828;
-      border: none;
-      color: white;
+    .reiniciar {
+      margin-top: 25px;
+    }
+
+    .reiniciar button {
       padding: 10px 20px;
-      border-radius: 10px;
+      background-color: #e53935;
+      color: white;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
+      font-size: 14px;
     }
 
-    button:hover {
-      background: #b91d1d;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .reiniciar button:hover {
+      background-color: #b71c1c;
     }
   </style>
 </head>
 <body>
-  <h1>🎮 Painel do Jogador</h1>
   <div class="painel">
-    <div class="avatar"></div>
-    <div class="info">
-      <p>Nome: <span id="nomeJogador"></span></p>
-      <p>Nível: <span id="nivel"></span></p>
-      <p>XP: <span id="xp"></span></p>
-      <div class="barra-xp">
-        <div id="xpBarra" class="xp-preenchido"></div>
-      </div>
-      <p>Chefes vencidos: <span id="chefesVencidos"></span></p>
-    </div>
+    <h1>🎮 Painel do Jogador</h1>
+    <img src="img/perfil.png" alt="Avatar do Jogador">
+    <p>Nome: Jogador</p>
+    <p>Nível: <span id="nivel">1</span></p>
+    <p>XP: <span id="xp">0</span></p>
+    <progress id="barra" value="0" max="100"></progress>
+    <p>Chefes vencidos: <span id="chefes">0</span></p>
 
     <div class="botoes">
-      <a href="batalha.html" onclick="tocarSom()">⚔️ Batalhar</a>
-      <a href="estudo.html" onclick="tocarSom()">📚 Estudar</a>
-      <a href="questoes.html" onclick="tocarSom()">🧠 Resolver Questões</a>
-      <a href="mapa.html" onclick="tocarSom()">🗺️ Ver Mapa</a>
-      <a href="ranking.html" onclick="tocarSom()">🏆 Ranking</a>
+      <a href="batalha.html">⚔️ Batalhar</a>
+      <a href="estudar.html">📚 Estudar</a>
+      <a href="questoes.html">🧠 Resolver Questões</a>
+      <a href="mapa.html">🗺️ Ver Mapa</a>
+      <a href="ranking.html">🏆 Ranking</a>
     </div>
 
-    <button onclick="resetarProgresso()">🔄 Reiniciar Progresso</button>
+    <div class="reiniciar">
+      <button onclick="resetarProgresso()">🔄 Reiniciar Progresso</button>
+    </div>
   </div>
 
-  <audio id="somClique">
-    <source src="audio/click.mp3" type="audio/mpeg">
-  </audio>
-
   <script>
-    const nome = localStorage.getItem("nome") || "Jogador";
-    const xp = parseInt(localStorage.getItem("xp") || 0);
-    const chefesVencidos = JSON.parse(localStorage.getItem("chefesVencidos") || "[]");
-
-    const nivel = Math.floor(xp / 100) + 1;
-    const xpAtual = xp % 100;
-
-    document.getElementById("nomeJogador").textContent = nome;
-    document.getElementById("nivel").textContent = nivel;
-    document.getElementById("xp").textContent = xp;
-    document.getElementById("chefesVencidos").textContent = chefesVencidos.length;
-    document.getElementById("xpBarra").style.width = xpAtual + "%";
-
-    function tocarSom() {
-      const audio = document.getElementById("somClique");
-      audio.currentTime = 0;
-      audio.play();
-    }
-
-    function resetarProgresso() {
-      if (confirm("Deseja realmente reiniciar seu progresso?")) {
-        localStorage.clear();
-        location.reload();
-      }
-    }
-  </script>
-</body>
-</html>
+    function atualizarPainel() {
+      const xp = parseInt(localStorage.getItem("xp") || 0);
+      const nivel = Math.floor(xp / 100) + 1;
+      const progresso
