@@ -3,30 +3,146 @@
 <head>
   <meta charset="UTF-8">
   <title>⚔️ Batalha - Magis Adventure</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url("img/fundo_batalha.jpg") no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      text-align: center;
+    }
+
+    .container {
+      background-color: rgba(0, 0, 0, 0.75);
+      margin: 50px auto;
+      padding: 30px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 0 20px black;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .personagens {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin: 20px 0;
+    }
+
+    .personagens img {
+      height: 180px;
+      border-radius: 12px;
+      border: 3px solid #00b4d8;
+    }
+
+    .versus {
+      font-size: 40px;
+      font-weight: bold;
+      color: #ff006e;
+    }
+
+    .acao {
+      margin-top: 30px;
+    }
+
+    .acao button {
+      background-color: #00b4d8;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      padding: 12px 25px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .acao button:hover {
+      background-color: #0096c7;
+    }
+
+    .mensagem {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #fcd34d;
+    }
+
+    .voltar {
+      margin-top: 20px;
+    }
+
+    .voltar a {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #e94560;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .voltar a:hover {
+      background-color: #b42b45;
+    }
+  </style>
 </head>
 <body>
-  <div class="batalha-container">
-    <h1>⚔️ Batalha contra o Chefe</h1>
-    <div class="batalha">
-      <div class="jogador">
-        <h2>Você</h2>
-        <img src="img/heroi.png" alt="Jogador">
-        <progress id="vidaJogador" value="100" max="100"></progress>
-      </div>
-      <div class="versus">VS</div>
-      <div class="chefe">
-        <h2 id="nomeChefe">Criminus Rex</h2>
-        <img id="imgChefe" src="img/chefes/criminusrex.png" alt="Chefe">
-        <progress id="vidaChefe" value="100" max="100"></progress>
-      </div>
+  <div class="container">
+    <h1>⚔️ Batalha!</h1>
+
+    <div class="personagens">
+      <img src="img/heroi.png" alt="Herói" />
+      <span class="versus">VS</span>
+      <img id="chefeImg" src="" alt="Chefe" />
     </div>
-    <div class="acoes">
-      <button onclick="atacarChefe()">🗡️ Atacar</button>
-      <button onclick="defenderJogador()">🛡️ Defender</button>
-      <button onclick="window.location.href='painel.html'">⬅ Voltar ao Painel</button>
+
+    <div class="acao">
+      <button onclick="batalhar()">Atacar Chefe</button>
+    </div>
+
+    <div class="mensagem" id="resultado"></div>
+
+    <div class="voltar">
+      <a href="painel.html">⬅ Voltar ao Painel</a>
     </div>
   </div>
+
+  <script>
+    const chefes = [
+      "administratus", "ambientalis", "civis", "constitucio",
+      "consumidor", "criminusrex", "economicus", "electoralis",
+      "empresarius", "humanitas", "internationalis", "juvenis",
+      "previdencialis", "processus", "processuscivilis",
+      "protectorhumanus", "tributarius"
+    ];
+
+    const chefeSorteado = chefes[Math.floor(Math.random() * chefes.length)];
+    document.getElementById("chefeImg").src = `img/chefes/${chefeSorteado}.png`;
+
+    function batalhar() {
+      const audio = new Audio("audio/click.mp3");
+      audio.play();
+
+      const sucesso = Math.random() < 0.7;
+
+      if (sucesso) {
+        document.getElementById("resultado").textContent = `Você derrotou ${chefeSorteado.toUpperCase()}!`;
+
+        const xpAtual = parseInt(localStorage.getItem("xp") || 0);
+        localStorage.setItem("xp", xpAtual + 50);
+
+        const chefesVencidos = parseInt(localStorage.getItem("chefesVencidos") || 0);
+        localStorage.setItem("chefesVencidos", chefesVencidos + 1);
+      } else {
+        document.getElementById("resultado").textContent = `Você perdeu a batalha contra ${chefeSorteado.toUpperCase()}! Tente novamente.`;
+      }
+    }
+  </script>
 </body>
 </html>
