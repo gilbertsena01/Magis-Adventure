@@ -5,89 +5,86 @@
   <title>Painel do Jogador</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to right, #1e3c72, #2a5298);
       color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      display: flex; justify-content: center; align-items: center;
       height: 100vh;
     }
 
     .painel {
-      background-color: rgba(0, 0, 0, 0.8);
+      position: relative;
+      background: url('img/fundo_painel.png') no-repeat center center;
+      background-size: cover;
       padding: 30px;
       border-radius: 16px;
-      box-shadow: 0 0 20px black;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
+      width: 90%; max-width: 500px;
       text-align: center;
-      width: 90%;
-      max-width: 500px;
     }
 
-    h1 {
-      margin-bottom: 20px;
-    }
-
-    img {
+    .avatar {
+      width: 100px; height: 100px;
       border-radius: 50%;
-      width: 100px;
+      border: 3px solid #00b4d8;
       margin-bottom: 10px;
     }
 
-    .barra-xp {
-      background-color: #555;
-      border-radius: 10px;
-      height: 20px;
-      width: 100%;
-      margin: 15px 0;
-      overflow: hidden;
-    }
+    h1 { margin-bottom: 20px; }
+    p { margin: 8px 0; font-size: 18px; }
 
-    .preenchimento {
-      background-color: #00ffcc;
-      height: 100%;
-      width: 0%;
+    .barra-xp {
+      background: #555; border-radius: 10px;
+      height: 20px; width: 100%; overflow: hidden;
+      margin: 10px 0;
+    }
+    .barra-xp .preenchimento {
+      background: #00ffcc; height: 100%; width: 0;
       transition: width 0.5s;
     }
 
+    .malhacao {
+      margin: 20px 0;
+    }
+    .malhacao button {
+      padding: 10px 20px; border: none;
+      border-radius: 8px; background: #00b4d8;
+      color: white; cursor: pointer;
+    }
+    .malhacao button:disabled {
+      background: #555; cursor: not-allowed;
+    }
+
+    .status-indicadores {
+      display: flex; justify-content: space-around;
+      margin: 20px 0; font-size: 18px;
+    }
+
     .botoes button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      background-color: #00b4d8;
-      color: white;
-      cursor: pointer;
-      transition: background 0.3s;
+      display: block; width: 100%;
+      margin: 8px 0; padding: 12px;
+      border: none; border-radius: 10px;
+      background: #00b4d8; color: white;
+      cursor: pointer; transition: background 0.3s;
     }
-
-    .botoes button:hover {
-      background-color: #0096c7;
-    }
-
-    .resetar {
-      margin-top: 20px;
-    }
+    .botoes button:hover { background: #0096c7; }
 
     .resetar button {
-      background-color: #e63946;
+      margin-top: 15px;
+      background: #e63946; color: white;
+      border: none; padding: 10px 20px;
+      border-radius: 8px; cursor: pointer;
     }
-
-    .resetar button:hover {
-      background-color: #b02a37;
-    }
+    .resetar button:hover { background: #b02a37; }
   </style>
 </head>
 <body>
   <div class="painel">
     <h1>🎮 Painel do Jogador</h1>
-    <img src="img/heroi.png" alt="Jogador" />
-    <p>Nome: Jogador</p>
+
+    <img id="avatar" src="" alt="Avatar" class="avatar" />
+    <p>Nome: <span id="nomeUsuario"></span></p>
     <p>Nível: <span id="nivel">1</span></p>
     <p>XP: <span id="xp">0</span></p>
 
@@ -95,46 +92,93 @@
       <div class="preenchimento" id="barraXP"></div>
     </div>
 
-    <p>Chefes vencidos: <span id="chefes">0</span></p>
+    <p>Saúde: <span id="saudeStatus"></span> ❤️</p>
+    <div class="malhacao">
+      <button id="btnMalhacao">Malhação Diária – 20 min</button>
+    </div>
+
+    <div class="status-indicadores">
+      <div>🗡️ QCs: <span id="qcs">0</span></div>
+      <div>✨ Força: <span id="forca">0</span></div>
+    </div>
 
     <div class="botoes">
-      <button onclick="navegar('batalha.html')">⚔️ Batalhar</button>
-      <button onclick="navegar('estudar.html')">📚 Estudar</button>
-      <button onclick="navegar('questoes.html')">🧠 Resolver Questões</button>
-      <button onclick="navegar('mapa.html')">🗺️ Ver Mapa</button>
-      <button onclick="navegar('ranking.html')">🏆 Ranking</button>
+      <button onclick="playClick(); window.location.href='batalha.html'">⚔️ Batalhar</button>
+      <button onclick="playClick(); window.location.href='estudar.html'">📚 Estudar</button>
+      <button onclick="playClick(); window.location.href='questoes.html'">🧠 Resolver Questões</button>
+      <button onclick="playClick(); window.location.href='mapa.html'">🗺️ Ver Mapa</button>
+      <button onclick="playClick(); window.location.href='ranking.html'">🏆 Ranking</button>
     </div>
 
     <div class="resetar">
-      <button onclick="reiniciar()">🔄 Reiniciar Progresso</button>
+      <button onclick="playClick(); reiniciar()">🔄 Reiniciar Progresso</button>
     </div>
   </div>
 
+  <audio id="click" src="audio/click.mp3"></audio>
+
   <script>
-    function navegar(destino) {
-      new Audio("audio/click.mp3").play();
-      setTimeout(() => {
-        window.location.href = destino;
-      }, 150);
+    function playClick() {
+      const c = document.getElementById("click");
+      c.currentTime = 0; c.play();
     }
 
     function reiniciar() {
-      if (confirm("Tem certeza que deseja reiniciar seu progresso?")) {
+      if (confirm("Reiniciar todo o progresso?")) {
         localStorage.clear();
         window.location.reload();
       }
     }
 
-    // Carregar dados do jogador
-    const xp = parseInt(localStorage.getItem("xp") || 0);
-    const chefes = parseInt(localStorage.getItem("chefesVencidos") || 0);
-    const nivel = Math.floor(xp / 100) + 1;
-    const progresso = (xp % 100);
+    // Dados do jogador
+    const nome = localStorage.getItem("nomeJogador") || "Jogador";
+    const avatar = localStorage.getItem("avatarJogador") || "heroi.png";
+    document.getElementById("nomeUsuario").textContent = nome;
+    document.getElementById("avatar").src = "img/" + avatar;
 
-    document.getElementById("nivel").textContent = nivel;
+    // XP e nível
+    let xp = parseInt(localStorage.getItem("xp") || 0);
+    const nivel = Math.floor(xp / 100) + 1;
     document.getElementById("xp").textContent = xp;
-    document.getElementById("chefes").textContent = chefes;
-    document.getElementById("barraXP").style.width = progresso + "%";
+    document.getElementById("nivel").textContent = nivel;
+    document.getElementById("barraXP").style.width = (xp % 100) + "%";
+
+    // Saúde/Malhação
+    const btnMalha = document.getElementById("btnMalhacao");
+    const saudeEl = document.getElementById("saudeStatus");
+    const last = parseInt(localStorage.getItem("lastMalhacao") || 0);
+    const penalAt = parseInt(localStorage.getItem("malhacaoPenalizadoAt") || 0);
+    const now = Date.now();
+
+    if (last && now - last > 48*3600*1000 && penalAt !== last) {
+      xp = Math.max(0, xp - 100);
+      localStorage.setItem("xp", xp);
+      document.getElementById("xp").textContent = xp;
+      document.getElementById("barraXP").style.width = (xp % 100) + "%";
+      localStorage.setItem("malhacaoPenalizadoAt", last);
+      saudeEl.textContent = "Zerado";
+    }
+
+    if (last && now - last < 24*3600*1000) {
+      btnMalha.disabled = true;
+      saudeEl.textContent = "Tá pago!";
+    } else if (saudeEl.textContent !== "Zerado") {
+      saudeEl.textContent = "Não pago";
+    }
+
+    btnMalha.addEventListener("click", () => {
+      playClick();
+      localStorage.setItem("lastMalhacao", now);
+      localStorage.removeItem("malhacaoPenalizadoAt");
+      saudeEl.textContent = "Tá pago!";
+      btnMalha.disabled = true;
+    });
+
+    // QCs e Força
+    const qcs = parseInt(localStorage.getItem("qcs") || 0);
+    const forca = parseInt(localStorage.getItem("forca") || 0);
+    document.getElementById("qcs").textContent = qcs;
+    document.getElementById("forca").textContent = forca;
   </script>
 </body>
 </html>
