@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Batalha - Magis Adventure</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f3f3;
+      text-align: center;
+      padding: 30px;
+    }
+    .combate {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin: 40px auto;
+      max-width: 900px;
+    }
+    .combatente {
+      width: 40%;
+    }
+    .combatente img {
+      width: 100%;
+      max-width: 200px;
+      border-radius: 10px;
+    }
+    .vida-bar {
+      height: 20px;
+      background: #ddd;
+      border-radius: 10px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+    .vida-bar-inner {
+      height: 100%;
+      background: #4caf50;
+      width: 100%;
+      transition: width 0.5s;
+    }
+    #mensagem {
+      font-size: 20px;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>⚔️ Batalha Final</h1>
+
+  <div class="combate">
+    <div class="combatente">
+      <h2>👨‍🎓 Jogador</h2>
+      <img src="img/personagens/lexius.png" alt="Jogador">
+      <div class="vida-bar"><div class="vida-bar-inner" id="vidaJogador"></div></div>
+      <p><strong>XP:</strong> <span id="xpJogador">0</span> | <strong>Defesa:</strong> <span id="defJogador">0</span></p>
+    </div>
+
+    <div class="combatente">
+      <h2>👹 Chefe</h2>
+      <img src="img/chefes/constituc
