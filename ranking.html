@@ -1,91 +1,109 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>🏆 Ranking - Magis Adventure</title>
   <style>
     body {
-      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-      color: white;
+      margin: 0; padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 40px;
+      background: #111; /* fallback */
+      display: flex; justify-content: center; align-items: center;
+      height: 100vh;
+      color: white;
     }
-
-    h1 {
-      margin-bottom: 30px;
-    }
-
-    .ranking {
-      background-color: rgba(0, 0, 0, 0.75);
+    .painel {
+      background: url('img/fundo_painel.png') no-repeat center center;
+      background-size: cover;
+      width: 90%; max-width: 600px;
       padding: 30px;
-      max-width: 600px;
-      margin: auto;
       border-radius: 16px;
-      box-shadow: 0 0 15px black;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
+      text-align: center;
     }
-
+    h1 {
+      margin-bottom: 20px;
+    }
     .ranking-entry {
-      background-color: rgba(255, 255, 255, 0.1);
+      background: rgba(0,0,0,0.6);
       margin: 10px 0;
       padding: 12px;
       border-radius: 8px;
-      font-size: 18px;
       display: flex;
       justify-content: space-between;
+      font-size: 18px;
     }
-
-    .voltar {
-      margin-top: 30px;
-    }
-
-    .voltar a {
-      display: inline-block;
+    .voltar button {
+      margin-top: 20px;
       padding: 10px 20px;
-      background-color: #e94560;
-      color: white;
-      text-decoration: none;
+      border: none;
       border-radius: 8px;
+      background: #00b4d8;
+      color: white;
       font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
     }
-
-    .voltar a:hover {
-      background-color: #b42b45;
+    .voltar button:hover {
+      background: #0096c7;
     }
+    audio { display: none; }
   </style>
 </head>
 <body>
-  <h1>🏆 Ranking dos Jogadores</h1>
-
-  <div class="ranking" id="rankingLista"></div>
-
-  <div class="voltar">
-    <a href="painel.html">⬅ Voltar ao Painel</a>
+  <div class="painel">
+    <h1>🏆 Ranking dos Jogadores</h1>
+    <div id="rankingLista"></div>
+    <div class="voltar">
+      <button onclick="playClick(); window.location.href='painel.html'">
+        ⬅ Voltar ao Painel
+      </button>
+    </div>
   </div>
 
-  <script>
-    // Obter dados do jogador atual
-    const nome = localStorage.getItem("nomeJogador") || "Você";
-    const xp = parseInt(localStorage.getItem("xp") || 0);
+  <audio id="musica" src="audio/tema.mp3" autoplay loop></audio>
+  <audio id="click" src="audio/click.mp3"></audio>
 
-    // Ranking fictício base (pode ser substituído por back-end futuramente)
+  <script>
+    // efeito de clique
+    function playClick() {
+      const c = document.getElementById("click");
+      c.currentTime = 0;
+      c.play();
+    }
+
+    // garantir que o tema inicie após o primeiro clique
+    window.addEventListener('click', () => {
+      const m = document.getElementById("musica");
+      if (m.paused) m.play();
+    });
+
+    // dados do jogador atual
+    const nomeAtual = localStorage.getItem("nomeJogador") || "Você";
+    const xpAtual = parseInt(localStorage.getItem("xp") || 0);
+
+    // ranking base (exemplo)
     const ranking = [
       { nome: "Alice", xp: 580 },
       { nome: "Bruno", xp: 470 },
       { nome: "Carlos", xp: 320 },
-      { nome: nome, xp: xp }
+      { nome: nomeAtual, xp: xpAtual }
     ];
 
-    // Ordena por XP decrescente
+    // ordenar por XP decrescente
     ranking.sort((a, b) => b.xp - a.xp);
 
+    // renderizar
     const container = document.getElementById("rankingLista");
-
-    ranking.forEach((jogador, index) => {
-      const linha = document.createElement("div");
-      linha.classList.add("ranking-entry");
-      linha.innerHTML = `<span>${index + 1}º</span><span>${jogador.nome}</span><span>${jogador.xp} XP</span>`;
-      container.appendChild(linha);
+    ranking.forEach((j, i) => {
+      const div = document.createElement("div");
+      div.className = "ranking-entry";
+      div.innerHTML = `
+        <span>${i+1}º</span>
+        <span>${j.nome}</span>
+        <span>${j.xp} XP</span>
+      `;
+      container.appendChild(div);
     });
   </script>
 </body>
