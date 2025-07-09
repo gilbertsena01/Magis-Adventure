@@ -2,150 +2,102 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Mapa de Progresso - Magis Adventure</title>
+  <title>Mapa de Progressão - Magis Adventure</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      padding: 40px;
+      background: linear-gradient(to bottom right, #1b263b, #415a77);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
       text-align: center;
+      margin: 0;
+      padding: 0;
     }
 
     h1 {
-      margin-bottom: 30px;
+      margin-top: 30px;
     }
 
-    .linha-do-tempo {
+    #linha-do-tempo {
       display: flex;
-      overflow-x: auto;
-      padding: 20px;
-      gap: 30px;
-      justify-content: flex-start;
-      background: #eee;
-      border-radius: 10px;
-      box-shadow: 0 0 8px #ccc;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 40px;
+      gap: 20px;
     }
 
     .chefe-item {
-      flex: 0 0 auto;
-      text-align: center;
-      cursor: pointer;
-      position: relative;
+      width: 120px;
+      height: 120px;
+      background-color: #0d1b2a;
+      border-radius: 15px;
+      box-shadow: 0 0 10px #00000099;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     .chefe-item img {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 4px solid #aaa;
-      transition: transform 0.3s;
-    }
-
-    .chefe-item.vencido img {
-      border-color: gold;
-    }
-
-    .chefe-item.liberado img {
-      border-color: #4caf50;
-    }
-
-    .chefe-item.bloqueado img {
-      border-color: #ccc;
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .chefe-item span {
-      display: block;
-      margin-top: 8px;
-      font-size: 14px;
-    }
-
-    .chefe-item:hover img {
-      transform: scale(1.1);
-    }
-
-    .tooltip {
-      position: absolute;
-      background-color: #333;
-      color: #fff;
-      padding: 6px 10px;
-      border-radius: 5px;
-      font-size: 12px;
-      top: -40px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: none;
-      white-space: nowrap;
-    }
-
-    .chefe-item:hover .tooltip {
-      display: block;
+      max-width: 100px;
+      max-height: 100px;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>🗺️ Linha do Tempo - Progresso do Jogador</h1>
-  <div class="linha-do-tempo" id="linhaChefes"></div>
+  <h1>🗺️ Jornada do Magis</h1>
+  <div id="linha-do-tempo"></div>
 
   <script>
-    const dados = JSON.parse(localStorage.getItem("magisDados")) || { xp: 0 };
-    const derrotados = JSON.parse(localStorage.getItem("chefesDerrotados")) || [];
-
     const chefes = [
-      { nome: "Constitucio", nivel: 1 },
-      { nome: "Criminus Rex", nivel: 2 },
-      { nome: "Processus", nivel: 3 },
-      { nome: "Electoralis", nivel: 4 },
-      { nome: "Administratus", nivel: 5 },
-      { nome: "Civis", nivel: 6 },
-      { nome: "Processus Civilis", nivel: 7 },
-      { nome: "Juvenis", nivel: 8 },
-      { nome: "Tributarius", nivel: 9 },
-      { nome: "Empresarius", nivel: 10 },
-      { nome: "Ambientalis", nivel: 11 },
-      { nome: "Internationalis", nivel: 12 },
-      { nome: "Previdencialis", nivel: 13 },
-      { nome: "Economicus", nivel: 14 },
-      { nome: "Consumidor", nivel: 15 },
-      { nome: "Humanitas", nivel: 16 },
-      { nome: "Protector Humanus", nivel: 17 }
+      { nome: "Constitucio, O Guardião dos Direitos" },
+      { nome: "Criminus Rex, O Senhor das Sombras" },
+      { nome: "Processus, O Mestre dos Ritos" },
+      { nome: "Electoralis, O Senhor da Democracia" },
+      { nome: "Administratus, O Burocrata Supremo" },
+      { nome: "Civis, O Patriarca das Relações" },
+      { nome: "Processus Civilis, O Mestre da Justiça" },
+      { nome: "Juvenis, O Protetor dos Pequenos" },
+      { nome: "Tributarius, O Cobrador Eterno" },
+      { nome: "Empresarius, O Magnata Jurídico" },
+      { nome: "Ambientalis, O Protetor da Natureza" },
+      { nome: "Internationalis, O Diplomata Supremo" },
+      { nome: "Previdencialis, O Protetor Social" },
+      { nome: "Economicus, O Regulador dos Mercados" },
+      { nome: "Consumidor, O Protetor dos Vulneráveis" },
+      { nome: "Humanitas, O Sábio Filósofo" },
+      { nome: "Protector Humanus, O Defensor Universal" }
     ];
 
-    const linha = document.getElementById("linhaChefes");
-    const nivelJogador = Math.floor(dados.xp / 100) + 1;
+    function gerarNomeArquivoImagem(nomeChefe) {
+      return nomeChefe
+        .normalize("NFD").replace(/[̀-ͯ]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "");
+    }
+
+    function carregarImagemChefe(chefe, callback) {
+      const nomeArquivo = gerarNomeArquivoImagem(chefe.nome);
+      const caminho = `img/chefes/${nomeArquivo}.png`;
+
+      const img = new Image();
+      img.src = caminho;
+      img.onload = () => callback(img);
+      img.onerror = () => {
+        const fallback = new Image();
+        fallback.src = "img/chefes/desconhecido.png";
+        callback(fallback);
+      };
+    }
 
     chefes.forEach(chefe => {
-      const item = document.createElement("div");
-      item.classList.add("chefe-item");
-
-      if (derrotados.includes(chefe.nome)) {
-        item.classList.add("vencido");
-      } else if (nivelJogador >= chefe.nivel) {
-        item.classList.add("liberado");
-        item.onclick = () => {
-          localStorage.setItem("chefeAtual", JSON.stringify(chefe));
-          window.location.href = "batalha.html";
-        };
-      } else {
-        item.classList.add("bloqueado");
-      }
-
-      const img = document.createElement("img");
-      img.src = `img/chefes/${chefe.nome.toLowerCase().replace(/ /g, '')}.png`;
-      img.alt = chefe.nome;
-
-      const nome = document.createElement("span");
-      nome.textContent = chefe.nome.split(" ")[0];
-
-      const tooltip = document.createElement("div");
-      tooltip.className = "tooltip";
-      tooltip.textContent = `${chefe.nome} — Nível ${chefe.nivel}`;
-
-      item.appendChild(img);
-      item.appendChild(nome);
-      item.appendChild(tooltip);
-      linha.appendChild(item);
+      carregarImagemChefe(chefe, (img) => {
+        const container = document.createElement('div');
+        container.classList.add("chefe-item");
+        container.title = chefe.nome;
+        container.appendChild(img);
+        document.getElementById("linha-do-tempo").appendChild(container);
+      });
     });
   </script>
 </body>
