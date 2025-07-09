@@ -1,147 +1,191 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>⚔️ Batalha - Magis Adventure</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       background: url("img/fundo_batalha.jpg") no-repeat center center fixed;
       background-size: cover;
       font-family: 'Segoe UI', sans-serif;
-      color: white;
-      text-align: center;
+      color: white; text-align: center;
     }
-
     .container {
-      background-color: rgba(0, 0, 0, 0.75);
-      margin: 50px auto;
-      padding: 30px;
-      border-radius: 16px;
-      width: 90%;
-      max-width: 600px;
-      box-shadow: 0 0 20px black;
+      background: rgba(0,0,0,0.8);
+      margin: 40px auto; padding: 30px;
+      border-radius: 16px; max-width: 600px;
+      position: relative; overflow: hidden;
     }
-
-    h1 {
-      margin-bottom: 20px;
-    }
-
-    .personagens {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
+    h1 { margin-bottom: 20px; }
+    .info-jogador, .info-chefe {
       margin: 20px 0;
     }
-
-    .personagens img {
-      height: 180px;
-      border-radius: 12px;
-      border: 3px solid #00b4d8;
+    .info-jogador img, .info-chefe img {
+      width: 120px; border-radius: 8px; border: 2px solid #00b4d8;
     }
-
-    .versus {
-      font-size: 40px;
-      font-weight: bold;
-      color: #ff006e;
+    .barra-vida {
+      background: #555; border-radius: 10px;
+      height: 20px; width: 100%; margin: 10px 0; overflow: hidden;
     }
-
-    .acao {
-      margin-top: 30px;
+    .vida {
+      background: #ff6363; height: 100%; width: 100%;
+      transition: width 0.5s ease;
     }
-
-    .acao button {
-      background-color: #00b4d8;
-      border: none;
-      border-radius: 10px;
-      color: white;
-      padding: 12px 25px;
-      font-size: 18px;
-      cursor: pointer;
+    .botoes button {
+      display: inline-block; margin: 10px;
+      padding: 12px 25px; border: none; border-radius: 8px;
+      background: #00b4d8; color: white; cursor: pointer;
       transition: background 0.3s;
     }
-
-    .acao button:hover {
-      background-color: #0096c7;
+    .botoes button:hover { background: #0096c7; }
+    .status-ind {
+      display: flex; justify-content: space-around;
+      margin: 20px 0; font-size: 18px;
     }
-
-    .mensagem {
-      margin-top: 20px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #fcd34d;
+    /* animações */
+    @keyframes shake {
+      0% { transform: translate(0,0); }
+      20% { transform: translate(-5px,5px); }
+      40% { transform: translate(5px,-5px); }
+      60% { transform: translate(-5px,5px); }
+      80% { transform: translate(5px,-5px); }
+      100% { transform: translate(0,0); }
     }
-
-    .voltar {
-      margin-top: 20px;
+    @keyframes confetti {
+      0% { background-position: 0 0; }
+      100% { background-position: 100% 100%; }
     }
-
-    .voltar a {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #e94560;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-
-    .voltar a:hover {
-      background-color: #b42b45;
+    .shake { animation: shake 0.6s; }
+    .confetti::before {
+      content: "🎉"; position: absolute; font-size: 5rem;
+      top: 20%; left: 45%; animation: confetti 1s infinite;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>⚔️ Batalha!</h1>
+  <div class="container" id="container">
+    <h1>⚔️ Batalha Contra o Boss</h1>
 
-    <div class="personagens">
-      <img src="img/heroi.png" alt="Herói" />
-      <span class="versus">VS</span>
-      <img id="chefeImg" src="" alt="Chefe" />
+    <div class="info-jogador">
+      <strong id="nomeUsuario"></strong><br>
+      <img id="avatar" src="" alt="Avatar"><br>
+      Vida: <div class="barra-vida"><div id="vidaJogador" class="vida"></div></div>
     </div>
 
-    <div class="acao">
-      <button onclick="batalhar()">Atacar Chefe</button>
+    <div class="status-ind">
+      <div>🗡️ QCs: <span id="qcs">0</span></div>
+      <div>✨ Força: <span id="forca">0</span></div>
     </div>
 
-    <div class="mensagem" id="resultado"></div>
+    <div class="botoes">
+      <button onclick="playClick(); atacarComQCs()">Atacar com QCs</button>
+      <button onclick="playClick(); atacarComForca()">Atacar com Força</button>
+    </div>
 
-    <div class="voltar">
-      <a href="painel.html">⬅ Voltar ao Painel</a>
+    <hr style="border-color:#444;margin:30px 0;">
+
+    <div class="info-chefe">
+      <strong id="nomeChefe"></strong><br>
+      <img id="imgChefe" src="" alt="Chefe"><br>
+      Vida: <div class="barra-vida"><div id="vidaChefe" class="vida"></div></div>
+    </div>
+
+    <div class="botoes">
+      <button onclick="playClick(); fugir()">Fugir</button>
+      <button onclick="playClick(); window.location.href='painel.html'">Voltar</button>
     </div>
   </div>
 
+  <audio id="musica" src="audio/tema.mp3" autoplay loop></audio>
+  <audio id="click" src="audio/click.mp3"></audio>
+
   <script>
+    // sons
+    function playClick() {
+      const c = document.getElementById("click");
+      c.currentTime = 0; c.play();
+    }
+
+    // dados iniciais
+    const nome  = localStorage.getItem("nomeJogador")   || "Jogador";
+    const avatar= localStorage.getItem("avatarJogador") || "heroi.png";
+    const qcs   = parseInt(localStorage.getItem("qcs")  || 0);
+    const forca = parseInt(localStorage.getItem("forca")|| 0);
     const chefes = [
-      "administratus", "ambientalis", "civis", "constitucio",
-      "consumidor", "criminusrex", "economicus", "electoralis",
-      "empresarius", "humanitas", "internationalis", "juvenis",
-      "previdencialis", "processus", "processuscivilis",
-      "protectorhumanus", "tributarius"
+      "Constitucio","Criminus Rex","Processus","Electoralis","Administratus",
+      "Civis","Processus Civilis","Juvenis","Tributarius","Empresarius",
+      "Ambientalis","Internationalis","Previdencialis","Economicus",
+      "Consumidor","Humanitas","Protector Humanus"
     ];
+    let vencidos = parseInt(localStorage.getItem("chefesVencidos")||0);
+    let bossIdx = vencidos % chefes.length;
+    let bossName = chefes[bossIdx];
+    
+    // exibir dados
+    document.getElementById("nomeUsuario").textContent = nome;
+    document.getElementById("avatar").src = "img/" + avatar;
+    document.getElementById("qcs").textContent = qcs;
+    document.getElementById("forca").textContent = forca;
+    document.getElementById("nomeChefe").textContent = bossName;
+    document.getElementById("imgChefe").src = "img/chefes/" +
+      bossName.toLowerCase().replace(/ /g,'').replace(/rex/,'rex') + ".png";
 
-    const chefeSorteado = chefes[Math.floor(Math.random() * chefes.length)];
-    document.getElementById("chefeImg").src = `img/chefes/${chefeSorteado}.png`;
+    // vida
+    let vidaJog = 100, vidaBoss = 100;
+    function atualizarBarras(){
+      document.getElementById("vidaJogador").style.width = vidaJog + "%";
+      document.getElementById("vidaChefe").style.width    = vidaBoss+ "%";
+    }
+    atualizarBarras();
 
-    function batalhar() {
-      const audio = new Audio("audio/click.mp3");
-      audio.play();
+    function atacarComQCs(){
+      if(qcs<=0) return alert("Sem QCs!");
+      let dano = qcs;
+      vidaBoss = Math.max(0, vidaBoss - dano);
+      localStorage.setItem("qcs", 0);
+      document.getElementById("qcs").textContent = 0;
+      contraAtaque();
+    }
 
-      const sucesso = Math.random() < 0.7;
+    function atacarComForca(){
+      if(forca<=0) return alert("Sem Força!");
+      let dano = forca;
+      vidaBoss = Math.max(0, vidaBoss - dano);
+      localStorage.setItem("forca", 0);
+      document.getElementById("forca").textContent = 0;
+      contraAtaque();
+    }
 
-      if (sucesso) {
-        document.getElementById("resultado").textContent = `Você derrotou ${chefeSorteado.toUpperCase()}!`;
+    function contraAtaque(){
+      atualizarBarras();
+      if(vidaBoss===0){ vencer(); return; }
+      // boss ataca
+      let dano = Math.floor(Math.random()*15)+5;
+      vidaJog = Math.max(0, vidaJog - dano);
+      atualizarBarras();
+      if(vidaJog===0){ perder(); }
+    }
 
-        const xpAtual = parseInt(localStorage.getItem("xp") || 0);
-        localStorage.setItem("xp", xpAtual + 50);
+    function vencer(){
+      const cont = document.getElementById("container");
+      cont.classList.add("confetti");
+      playClick();
+      alert("Você venceu "+ bossName +"! +50 XP");
+      let xp = parseInt(localStorage.getItem("xp")||0)+50;
+      localStorage.setItem("xp", xp);
+      localStorage.setItem("chefesVencidos", vencidos+1);
+    }
 
-        const chefesVencidos = parseInt(localStorage.getItem("chefesVencidos") || 0);
-        localStorage.setItem("chefesVencidos", chefesVencidos + 1);
-      } else {
-        document.getElementById("resultado").textContent = `Você perdeu a batalha contra ${chefeSorteado.toUpperCase()}! Tente novamente.`;
-      }
+    function perder(){
+      const cont = document.getElementById("container");
+      cont.classList.add("shake");
+      playClick();
+      alert("Você foi derrotado por "+ bossName +"!");
+    }
+
+    function fugir(){
+      window.location.href="painel.html";
     }
   </script>
 </body>
