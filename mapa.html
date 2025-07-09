@@ -2,10 +2,10 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>🗺️ Mapa de Progresso - Magis Adventure</title>
+  <title>🗺️ Mapa - Magis Adventure</title>
   <style>
     body {
-      background: linear-gradient(to right, #0f2027, #203a43);
+      background: linear-gradient(to right, #1c1c3c, #29323c);
       color: white;
       font-family: 'Segoe UI', sans-serif;
       padding: 20px;
@@ -16,32 +16,37 @@
       margin-bottom: 30px;
     }
 
-    .mapa {
+    .mapa-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 20px;
+      gap: 30px;
     }
 
     .chefe {
-      width: 120px;
-      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       background-color: #112d4e;
       border-radius: 12px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.4);
+      padding: 10px;
+      width: 160px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
 
     .chefe img {
-      width: 100%;
+      width: 100px;
+      height: auto;
       border-radius: 8px;
     }
 
-    .chefe.vencido {
-      border: 3px solid #00ff99;
+    .chefe span {
+      margin-top: 10px;
+      font-weight: bold;
     }
 
     .voltar {
-      margin-top: 30px;
+      margin-top: 40px;
     }
 
     .voltar a {
@@ -60,32 +65,28 @@
   </style>
 </head>
 <body>
-  <h1>🗺️ Mapa de Progresso</h1>
-  <div class="mapa" id="mapa"></div>
-  <div class="voltar">
-    <a href="painel.html">⬅ Voltar ao Painel</a>
+  <h1>🌟 Linha do Tempo - Chefes Vencidos</h1>
+  <div class="mapa-container">
+    <div class="chefe"><img src="img/chefes/constitucio.png"><span>Constitucio</span></div>
+    <div class="chefe"><img src="img/chefes/criminusrex.png"><span>Criminus Rex</span></div>
+    <div class="chefe"><img src="img/chefes/processus.png"><span>Processus</span></div>
+    <div class="chefe"><img src="img/chefes/electoralis.png"><span>Electoralis</span></div>
+    <div class="chefe"><img src="img/chefes/administratus.png"><span>Administratus</span></div>
+    <div class="chefe"><img src="img/chefes/civis.png"><span>Civis</span></div>
+    <div class="chefe"><img src="img/chefes/processuscivilis.png"><span>Processus Civilis</span></div>
+    <div class="chefe"><img src="img/chefes/juvenis.png"><span>Juvenis</span></div>
+    <div class="chefe"><img src="img/chefes/tributarius.png"><span>Tributarius</span></div>
+    <div class="chefe"><img src="img/chefes/empresarius.png"><span>Empresarius</span></div>
+    <div class="chefe"><img src="img/chefes/ambientalis.png"><span>Ambientalis</span></div>
+    <div class="chefe"><img src="img/chefes/internationalis.png"><span>Internationalis</span></div>
+    <div class="chefe"><img src="img/chefes/previdencialis.png"><span>Previdencialis</span></div>
+    <div class="chefe"><img src="img/chefes/economicus.png"><span>Economicus</span></div>
+    <div class="chefe"><img src="img/chefes/consumidor.png"><span>Consumidor</span></div>
+    <div class="chefe"><img src="img/chefes/humanitas.png"><span>Humanitas</span></div>
+    <div class="chefe"><img src="img/chefes/protectorhumanus.png"><span>Protector Humanus</span></div>
   </div>
-
-  <script>
-    const chefes = [
-      "constitucio", "criminusrex", "processus", "electoralis", "administratus",
-      "civis", "processuscivilis", "juvenis", "tributarius", "empresarius",
-      "ambientalis", "internationalis", "previdencialis", "economicus",
-      "consumidor", "humanitas", "protectorhumanus"
-    ];
-
-    const vencidos = parseInt(localStorage.getItem("chefesVencidos") || 0);
-    const container = document.getElementById("mapa");
-
-    chefes.forEach((nome, index) => {
-      const bloco = document.createElement("div");
-      bloco.className = "chefe" + (index < vencidos ? " vencido" : "");
-      const img = document.createElement("img");
-      img.src = `img/chefes/${nome}.png`;
-      img.alt = nome;
-      bloco.appendChild(img);
-      container.appendChild(bloco);
-    });
-  </script>
+  <div class="voltar">
+    <a href="painel.html">⬅️ Voltar ao Painel</a>
+  </div>
 </body>
 </html>
