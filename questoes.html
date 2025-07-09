@@ -2,79 +2,103 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Registro de Questões - Magis Adventure</title>
+  <title>📘 Questões - Magis Adventure</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #fdfdfd;
-      text-align: center;
-      padding: 40px;
-    }
-
-    .container {
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      max-width: 400px;
-      margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    input[type="number"] {
-      padding: 10px;
-      width: 100%;
-      font-size: 16px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      margin-top: 10px;
-    }
-
-    button {
-      padding: 15px 20px;
-      font-size: 18px;
-      margin-top: 20px;
-      background: #2196F3;
+      background: linear-gradient(to right, #0f2027, #203a43);
       color: white;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .painel {
+      margin-top: 30px;
+    }
+
+    .entrada {
+      background-color: #112d4e;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    .entrada input {
+      padding: 10px;
+      margin: 10px;
       border: none;
       border-radius: 8px;
+      font-size: 16px;
+      width: 80px;
+      text-align: center;
+    }
+
+    .entrada button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background-color: #3f72af;
+      color: white;
+      font-size: 16px;
       cursor: pointer;
     }
 
-    button:hover {
-      background: #0d47a1;
+    .entrada button:hover {
+      background-color: #2e5c9a;
     }
 
-    #xpResultado {
+    .status {
       margin-top: 20px;
       font-size: 18px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>❓ Registro de Questões</h1>
-    <p>Quantas questões você acertou hoje?</p>
-    <input type="number" id="qtd" placeholder="Ex: 15" min="1">
-    <button onclick="registrarQuestoes()">✔️ Registrar</button>
-    <p id="xpResultado"></p>
-    <button onclick="window.location.href='painel.html'">⬅️ Voltar ao Painel</button>
+  <h1>📘 Registro de Questões</h1>
+  <div class="painel">
+    <div class="entrada">
+      <p>Informe o número de questões feitas e acertos:</p>
+      <input type="number" id="qtdRespondidas" placeholder="Feitas">
+      <input type="number" id="qtdAcertos" placeholder="Acertos">
+      <br>
+      <button onclick="registrarQuestoes()">Registrar</button>
+    </div>
+    <div class="status">
+      <p>Questões respondidas: <span id="respondidas">0</span></p>
+      <p>Acertos: <span id="acertos">0</span></p>
+    </div>
   </div>
 
   <script>
+    let respondidas = parseInt(localStorage.getItem("respondidas") || 0);
+    let acertos = parseInt(localStorage.getItem("acertos") || 0);
+
     function registrarQuestoes() {
-      const qtd = parseInt(document.getElementById("qtd").value);
-      if (isNaN(qtd) || qtd <= 0) {
-        alert("Digite uma quantidade válida.");
-        return;
-      }
+      const novasRespondidas = parseInt(document.getElementById("qtdRespondidas").value) || 0;
+      const novosAcertos = parseInt(document.getElementById("qtdAcertos").value) || 0;
 
-      let dados = JSON.parse(localStorage.getItem("magisDados")) || { xp: 0, defesa: 0 };
-      const ganho = qtd * 2; // Cada questão = 2 XP
-      dados.xp += ganho;
-      localStorage.setItem("magisDados", JSON.stringify(dados));
+      respondidas += novasRespondidas;
+      acertos += novosAcertos;
 
-      document.getElementById("xpResultado").textContent = `✅ Você ganhou ${ganho} XP! Total atual: ${dados.xp} XP.`;
+      localStorage.setItem("respondidas", respondidas);
+      localStorage.setItem("acertos", acertos);
+
+      const xpAtual = parseInt(localStorage.getItem("xp") || 0);
+      const xpGanho = (novasRespondidas - novosAcertos) * 5 + novosAcertos * 20;
+      localStorage.setItem("xp", xpAtual + xpGanho);
+
+      document.getElementById("respondidas").textContent = respondidas;
+      document.getElementById("acertos").textContent = acertos;
+
+      document.getElementById("qtdRespondidas").value = "";
+      document.getElementById("qtdAcertos").value = "";
     }
+
+    document.getElementById("respondidas").textContent = respondidas;
+    document.getElementById("acertos").textContent = acertos;
   </script>
 </body>
 </html>
