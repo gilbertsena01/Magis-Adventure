@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Estudo - Magis Adventure</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fdfdfd;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    button {
+      padding: 15px 20px;
+      font-size: 18px;
+      margin-top: 20px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #388e3c;
+    }
+
+    #xpGanho {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📚 Registro de Estudo</h1>
+    <p>Concluiu uma sessão de 25 minutos de foco?</p>
+    <button onclick="registrarPomodoro()">✔️ Registrar Pomodoro</button>
+    <p id="xpGanho"></p>
+    <button onclick="window.location.href='painel.html'">⬅️ Voltar ao Painel</button>
+  </div>
+
+  <script>
+    function registrarPomodoro() {
+      let dados = JSON.parse(localStorage.getItem("magisDados")) || { xp: 0, defesa: 0 };
+      dados.xp += 25; // cada pomodoro vale 25 XP
+      localStorage.setItem("magisDados", JSON.stringify(dados));
+      document.getElementById("xpGanho").textContent = `✅ Você ganhou 25 XP! Total atual: ${dados.xp} XP.`;
+    }
+  </script>
+</body>
+</html>
