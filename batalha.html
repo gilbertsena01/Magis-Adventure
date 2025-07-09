@@ -2,64 +2,136 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Batalha - Magis Adventure</title>
+  <title>⚔️ Batalha - Magis Adventure</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f3f3f3;
+      background: linear-gradient(to right, #1a1a2e, #16213e);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
       text-align: center;
-      padding: 30px;
+      padding: 20px;
     }
-    .combate {
+
+    h1 {
+      margin-bottom: 30px;
+    }
+
+    .campo-batalha {
       display: flex;
       justify-content: space-around;
       align-items: center;
       margin: 40px auto;
-      max-width: 900px;
+      max-width: 800px;
+      padding: 30px;
+      border: 2px solid #ccc;
+      border-radius: 20px;
+      background-color: #0f3460;
+      box-shadow: 0 0 15px #000000aa;
     }
-    .combatente {
-      width: 40%;
+
+    .personagem {
+      width: 150px;
     }
-    .combatente img {
+
+    .vida {
       width: 100%;
-      max-width: 200px;
-      border-radius: 10px;
-    }
-    .vida-bar {
       height: 20px;
-      background: #ddd;
+      background: #aaa;
       border-radius: 10px;
-      margin-top: 10px;
       overflow: hidden;
+      margin-bottom: 10px;
     }
-    .vida-bar-inner {
+
+    .barra-vida {
       height: 100%;
-      background: #4caf50;
+      background-color: #00ff00;
       width: 100%;
-      transition: width 0.5s;
+      transition: width 0.5s ease;
     }
-    #mensagem {
-      font-size: 20px;
-      margin-top: 20px;
+
+    .botoes {
+      margin-top: 30px;
     }
-    button {
+
+    .botoes button {
       padding: 10px 20px;
-      font-size: 18px;
-      margin-top: 20px;
+      margin: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #e94560;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    .botoes button:hover {
+      background: #b42b45;
     }
   </style>
 </head>
 <body>
-  <h1>⚔️ Batalha Final</h1>
-
-  <div class="combate">
-    <div class="combatente">
-      <h2>👨‍🎓 Jogador</h2>
-      <img src="img/personagens/lexius.png" alt="Jogador">
-      <div class="vida-bar"><div class="vida-bar-inner" id="vidaJogador"></div></div>
-      <p><strong>XP:</strong> <span id="xpJogador">0</span> | <strong>Defesa:</strong> <span id="defJogador">0</span></p>
+  <h1>⚔️ Batalha em Curso</h1>
+  <div class="campo-batalha">
+    <div>
+      <div class="vida"><div id="vidaJogador" class="barra-vida"></div></div>
+      <img src="img/heroi.png" class="personagem" alt="Herói">
+      <p>Você</p>
     </div>
+    <div>
+      <div class="vida"><div id="vidaChefe" class="barra-vida"></div></div>
+      <img src="img/chefes/constitucio.png" class="personagem" alt="Chefe">
+      <p>Constitucio</p>
+    </div>
+  </div>
 
-    <div class="combatente">
-      <h2>👹 Chefe</h2>
-      <img src="img/chefes/constituc
+  <div class="botoes">
+    <button onclick="atacar()">Atacar</button>
+  </div>
+
+  <script>
+    let vidaJogador = 100;
+    let vidaChefe = 100;
+    let xpGanho = 50;
+
+    function atualizarBarras() {
+      document.getElementById("vidaJogador").style.width = vidaJogador + "%";
+      document.getElementById("vidaChefe").style.width = vidaChefe + "%";
+    }
+
+    function atacar() {
+      const danoJogador = Math.floor(Math.random() * 15) + 10;
+      const danoChefe = Math.floor(Math.random() * 10) + 5;
+
+      vidaChefe -= danoJogador;
+      vidaJogador -= danoChefe;
+
+      if (vidaChefe < 0) vidaChefe = 0;
+      if (vidaJogador < 0) vidaJogador = 0;
+
+      atualizarBarras();
+
+      if (vidaChefe === 0) {
+        alert("Você venceu! +" + xpGanho + " XP!");
+        const xpAtual = parseInt(localStorage.getItem("xp") || 0);
+        localStorage.setItem("xp", xpAtual + xpGanho);
+
+        let vencidos = JSON.parse(localStorage.getItem("chefesVencidos") || "[]");
+        if (!vencidos.includes("constitucio")) {
+          vencidos.push("constitucio");
+          localStorage.setItem("chefesVencidos", JSON.stringify(vencidos));
+        }
+
+        setTimeout(() => window.location.href = "painel.html", 1000);
+      }
+
+      if (vidaJogador === 0) {
+        alert("Você foi derrotado! Tente novamente.");
+        setTimeout(() => location.reload(), 1000);
+      }
+    }
+
+    atualizarBarras();
+  </script>
+</body>
+</html>
