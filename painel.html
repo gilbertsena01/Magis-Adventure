@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel do Jogador - Magis Adventure</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .painel {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f0f0f0;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    .painel h2 {
+      text-align: center;
+    }
+    .painel button {
+      margin: 10px 5px;
+      padding: 10px;
+      font-weight: bold;
+    }
+    .barra-xp {
+      background-color: #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    .barra-xp-inner {
+      background-color: #4caf50;
+      height: 20px;
+      width: 0%;
+      transition: width 0.5s;
+    }
+    .info {
+      font-size: 16px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="painel">
+    <h2>⚖️ Painel de Progresso - Magis Adventure</h2>
+
+    <div class="info">👤 Nome: <span id="nomeJogador">Gilbert Sena</span></div>
+    <div class="info">🎓 Nível: <span id="nivel">1</span></div>
+    <div class="info">🔋 XP: <span id="xpAtual">0</span> / <span id="xpMax">100</span></div>
+    
+    <div class="barra-xp">
+      <div class="barra-xp-inner" id="barraXP"></div>
+    </div>
+
+    <div class="info">🍅 Pomodoros estudados: <span id="pomodoros">0</span></div>
+    <div class="info">❓ Questões resolvidas: <span id="questoes">0</span></div>
+    <div class="info">⚔️ Ataque: <span id="ataque">0</span></div>
+    <div class="info">🛡️ Defesa: <span id="defesa">0</span></div>
+
+    <button onclick="registrarPomodoro()">+ Pomodoro</button>
+    <button onclick="registrarQuestoes()">+ 10 Questões</button>
+    <button onclick="revisaoSemanal()">+ Revisão</button>
+    <button onclick="resetar()">🔄 Reset</button>
+
+    <p class="info" id="statusChefe">🔒 Chefe da semana: bloqueado</p>
+  </div>
+
+  <script>
+    const dados = JSON.parse(localStorage.getItem("magisDados")) || {
+      xp: 0,
+      pomodoros: 0,
+      questoes: 0,
+      ataque: 0,
+      defesa: 0
+    };
+
+    const atualizarPainel = () => {
+      let nivel = Math.floor(dados.xp / 100) + 1;
+      let xpAtual = dados.xp % 100;
+
+      document.getElementById("nivel").textContent = nivel;
+      document.getElementById("xpAtual").textContent = xpAtual;
+      document.getElementById("xpMax").textContent = 100;
+      document.getElementById("barraXP").style.width = `${xpAtual}%`;
+
+      document.getElementById("pomodoros").textContent = dados.pomodoros;
+      document.getElementById("questoes").textContent = dados.questoes;
+      document.getElementById("ataque").textContent = dados.ataque;
+      document.getElementById("defesa").textContent = dados.defesa;
+
+      document.getElementById("statusChefe").textContent = 
+        dados.xp >= 100 ? "✅ Chefe da semana: liberado" : "🔒 Chefe da semana: bloqueado";
+    };
+
+    const salvar = () => {
+      localStorage.setItem("magisDados", JSON.stringify(dados));
+      atualizarPainel();
+    };
+
+    const registrarPomodoro = () => {
+      dados.pomodoros++;
+      dados.xp += 10;
+      salvar();
+    };
+
+    const registrarQuestoes = () => {
+      dados.questoes += 10;
+      dados.ataque += 2;
+      salvar();
+    };
+
+    const revisaoSemanal = () => {
+      dados.defesa++;
+      salvar();
+    };
+
+    const resetar = () => {
+      if (confirm("Deseja apagar todo o progresso?")) {
+        localStorage.removeItem("magisDados");
+        location.reload();
+      }
+    };
+
+    atualizarPainel();
+  </script>
+</body>
+</html>
+
