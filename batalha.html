@@ -3,165 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <title>⚔️ Batalha - Magis Adventure</title>
-  <style>
-    body {
-      background: linear-gradient(to right, #1a1a2e, #16213e);
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
-
-    h1 {
-      margin-bottom: 30px;
-    }
-
-    .campo-batalha {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      margin: 40px auto;
-      max-width: 800px;
-      padding: 30px;
-      border: 2px solid #ccc;
-      border-radius: 20px;
-      background-color: #0f3460;
-      box-shadow: 0 0 15px #000000aa;
-    }
-
-    .personagem {
-      width: 150px;
-    }
-
-    .vida {
-      width: 100%;
-      height: 20px;
-      background: #aaa;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 10px;
-    }
-
-    .barra-vida {
-      height: 100%;
-      background-color: #00ff00;
-      width: 100%;
-      transition: width 0.5s ease;
-    }
-
-    .botoes {
-      margin-top: 30px;
-    }
-
-    .botoes button {
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      background: #e94560;
-      color: white;
-      transition: background 0.3s;
-    }
-
-    .botoes button:hover {
-      background: #b42b45;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <h1>⚔️ Batalha em Curso</h1>
-  <div class="campo-batalha">
-    <div>
-      <div class="vida"><div id="vidaJogador" class="barra-vida"></div></div>
-      <img src="img/heroi.png" class="personagem" alt="Herói">
-      <p>Você</p>
+  <div class="batalha-container">
+    <h1>⚔️ Batalha contra o Chefe</h1>
+    <div class="batalha">
+      <div class="jogador">
+        <h2>Você</h2>
+        <img src="img/heroi.png" alt="Jogador">
+        <progress id="vidaJogador" value="100" max="100"></progress>
+      </div>
+      <div class="versus">VS</div>
+      <div class="chefe">
+        <h2 id="nomeChefe">Criminus Rex</h2>
+        <img id="imgChefe" src="img/chefes/criminusrex.png" alt="Chefe">
+        <progress id="vidaChefe" value="100" max="100"></progress>
+      </div>
     </div>
-    <div>
-      <div class="vida"><div id="vidaChefe" class="barra-vida"></div></div>
-      <img id="imgChefe" class="personagem" alt="Chefe">
-      <p id="nomeChefe"></p>
+    <div class="acoes">
+      <button onclick="atacarChefe()">🗡️ Atacar</button>
+      <button onclick="defenderJogador()">🛡️ Defender</button>
+      <button onclick="window.location.href='painel.html'">⬅ Voltar ao Painel</button>
     </div>
   </div>
-
-  <div class="botoes">
-    <button onclick="atacar()">Atacar</button>
-  </div>
-
-  <script>
-    const chefes = [
-      { nome: "Constitucio", img: "img/chefes/constitucio.png" },
-      { nome: "Criminus Rex", img: "img/chefes/criminusrex.png" },
-      { nome: "Processus", img: "img/chefes/processus.png" },
-      { nome: "Electoralis", img: "img/chefes/electoralis.png" },
-      { nome: "Administratus", img: "img/chefes/administratus.png" },
-      { nome: "Civis", img: "img/chefes/civis.png" },
-      { nome: "Processus Civilis", img: "img/chefes/processuscivilis.png" },
-      { nome: "Juvenis", img: "img/chefes/juvenis.png" },
-      { nome: "Tributarius", img: "img/chefes/tributarius.png" },
-      { nome: "Empresarius", img: "img/chefes/empresarius.png" },
-      { nome: "Ambientalis", img: "img/chefes/ambientalis.png" },
-      { nome: "Internationalis", img: "img/chefes/internationalis.png" },
-      { nome: "Previdencialis", img: "img/chefes/previdencialis.png" },
-      { nome: "Economicus", img: "img/chefes/economicus.png" },
-      { nome: "Consumidor", img: "img/chefes/consumidor.png" },
-      { nome: "Humanitas", img: "img/chefes/humanitas.png" },
-      { nome: "Protector Humanus", img: "img/chefes/protectorhumanus.png" }
-    ];
-
-    const vencidos = JSON.parse(localStorage.getItem("chefesVencidos") || "[]");
-    const proximoChefe = chefes.find(c => !vencidos.includes(c.nome.toLowerCase()));
-
-    if (!proximoChefe) {
-      alert("Você venceu todos os chefes!");
-      window.location.href = "painel.html";
-    }
-
-    document.getElementById("imgChefe").src = proximoChefe.img;
-    document.getElementById("nomeChefe").textContent = proximoChefe.nome;
-
-    let vidaJogador = 100;
-    let vidaChefe = 100;
-    let xpGanho = 50;
-
-    function atualizarBarras() {
-      document.getElementById("vidaJogador").style.width = vidaJogador + "%";
-      document.getElementById("vidaChefe").style.width = vidaChefe + "%";
-    }
-
-    function atacar() {
-      const danoJogador = Math.floor(Math.random() * 15) + 10;
-      const danoChefe = Math.floor(Math.random() * 10) + 5;
-
-      vidaChefe -= danoJogador;
-      vidaJogador -= danoChefe;
-
-      if (vidaChefe < 0) vidaChefe = 0;
-      if (vidaJogador < 0) vidaJogador = 0;
-
-      atualizarBarras();
-
-      if (vidaChefe === 0) {
-        alert("Você venceu " + proximoChefe.nome + "! +" + xpGanho + " XP!");
-        const xpAtual = parseInt(localStorage.getItem("xp") || 0);
-        localStorage.setItem("xp", xpAtual + xpGanho);
-
-        if (!vencidos.includes(proximoChefe.nome.toLowerCase())) {
-          vencidos.push(proximoChefe.nome.toLowerCase());
-          localStorage.setItem("chefesVencidos", JSON.stringify(vencidos));
-        }
-
-        setTimeout(() => location.reload(), 1000);
-      }
-
-      if (vidaJogador === 0) {
-        alert("Você foi derrotado! Tente novamente.");
-        setTimeout(() => location.reload(), 1000);
-      }
-    }
-
-    atualizarBarras();
-  </script>
 </body>
 </html>
