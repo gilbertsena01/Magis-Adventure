@@ -2,25 +2,93 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>📚 Estudo - Magis Adventure</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+  <title>📚 Estudar - Magis Adventure</title>
+  <style>
+    body {
+      background: linear-gradient(to right, #1e3c72, #2a5298);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .container {
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 15px black;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: #00b4d8;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 25px;
+      font-size: 18px;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #0096c7;
+    }
+
+    .mensagem {
+      margin-top: 25px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #fcd34d;
+    }
+
+    .voltar {
+      margin-top: 30px;
+    }
+
+    .voltar a {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #e94560;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .voltar a:hover {
+      background-color: #b42b45;
+    }
+  </style>
 </head>
 <body>
-  <div class="painel">
-    <h1>📚 Registrar Estudo</h1>
-    <div class="entrada">
-      <p>Informe quantos minutos estudou:</p>
-      <input type="number" id="tempoEstudo" placeholder="Minutos">
-      <br>
-      <button onclick="registrarEstudo()">Registrar</button>
-    </div>
-    <div class="status">
-      <p>Total de minutos estudados: <span id="totalEstudo">0</span></p>
-    </div>
+  <div class="container">
+    <h1>📚 Sessão de Estudo</h1>
+    <p>Estude por pelo menos 25 minutos e depois clique no botão abaixo.</p>
+    <button onclick="registrarEstudo()">✅ Estudei Agora</button>
+    <div class="mensagem" id="mensagemEstudo"></div>
     <div class="voltar">
       <a href="painel.html">⬅ Voltar ao Painel</a>
     </div>
   </div>
+
+  <script>
+    function registrarEstudo() {
+      const audio = new Audio("audio/click.mp3");
+      audio.play();
+
+      const xpAtual = parseInt(localStorage.getItem("xp") || 0);
+      const novoXP = xpAtual + 30;
+      localStorage.setItem("xp", novoXP);
+
+      document.getElementById("mensagemEstudo").textContent = "🎓 Você ganhou 30 XP por estudar!";
+    }
+  </script>
 </body>
 </html>
