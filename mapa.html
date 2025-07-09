@@ -3,18 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <title>🗺️ Mapa - Magis Adventure</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+  <style>
+    body {
+      background: linear-gradient(to right, #373b44, #4286f4);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 30px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+    }
+
+    .linha-do-tempo {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .chefe {
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 12px;
+      padding: 10px;
+      width: 120px;
+      box-shadow: 0 0 10px black;
+    }
+
+    .chefe img {
+      width: 100%;
+      border-radius: 8px;
+      opacity: 0.3;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .chefe.vencido img {
+      opacity: 1;
+      transform: scale(1.05);
+      border: 2px solid #00ffcc;
+    }
+
+    .voltar {
+      margin-top: 40px;
+    }
+
+    .voltar a {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #e94560;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .voltar a:hover {
+      background-color: #b42b45;
+    }
+  </style>
 </head>
 <body>
-  <div class="painel">
-    <h1>🗺️ Linha do Tempo dos Chefes</h1>
-    <div class="linha-do-tempo" id="linhaDoTempo">
-      <!-- Chefes vencidos serão adicionados aqui -->
-    </div>
-    <div class="voltar">
-      <a href="painel.html">⬅ Voltar ao Painel</a>
-    </div>
+  <h1>🗺️ Linha do Tempo dos Chefes</h1>
+
+  <div class="linha-do-tempo" id="chefesContainer"></div>
+
+  <div class="voltar">
+    <a href="painel.html">⬅ Voltar ao Painel</a>
   </div>
+
+  <script>
+    const chefes = [
+      "constitucio", "criminusrex", "processus", "electoralis", "administratus",
+      "civis", "processuscivilis", "juvenis", "tributarius", "empresarius",
+      "ambientalis", "internationalis", "previdencialis", "economicus",
+      "consumidor", "humanitas", "protectorhumanus"
+    ];
+
+    const vencidos = parseInt(localStorage.getItem("chefesVencidos") || 0);
+
+    const container = document.getElementById("chefesContainer");
+
+    chefes.forEach((nome, index) => {
+      const div = document.createElement("div");
+      div.classList.add("chefe");
+      if (index < vencidos) {
+        div.classList.add("vencido");
+      }
+
+      const img = document.createElement("img");
+      img.src = `img/chefes/${nome}.png`;
+      img.alt = nome;
+
+      div.appendChild(img);
+      container.appendChild(div);
+    });
+  </script>
 </body>
 </html>
