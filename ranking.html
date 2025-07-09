@@ -3,28 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <title>🏆 Ranking - Magis Adventure</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+  <style>
+    body {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+    }
+
+    .ranking {
+      background-color: rgba(0, 0, 0, 0.75);
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 16px;
+      box-shadow: 0 0 15px black;
+    }
+
+    .ranking-entry {
+      background-color: rgba(255, 255, 255, 0.1);
+      margin: 10px 0;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 18px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .voltar {
+      margin-top: 30px;
+    }
+
+    .voltar a {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #e94560;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .voltar a:hover {
+      background-color: #b42b45;
+    }
+  </style>
 </head>
 <body>
-  <div class="painel">
-    <h1>🏆 Ranking de Jogadores</h1>
-    <table id="tabelaRanking">
-      <thead>
-        <tr>
-          <th>Posição</th>
-          <th>Nome</th>
-          <th>Nível</th>
-          <th>XP</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Conteúdo gerado por JavaScript -->
-      </tbody>
-    </table>
-    <div class="voltar">
-      <a href="painel.html">⬅ Voltar ao Painel</a>
-    </div>
+  <h1>🏆 Ranking dos Jogadores</h1>
+
+  <div class="ranking" id="rankingLista"></div>
+
+  <div class="voltar">
+    <a href="painel.html">⬅ Voltar ao Painel</a>
   </div>
+
+  <script>
+    // Obter dados do jogador atual
+    const nome = localStorage.getItem("nomeJogador") || "Você";
+    const xp = parseInt(localStorage.getItem("xp") || 0);
+
+    // Ranking fictício base (pode ser substituído por back-end futuramente)
+    const ranking = [
+      { nome: "Alice", xp: 580 },
+      { nome: "Bruno", xp: 470 },
+      { nome: "Carlos", xp: 320 },
+      { nome: nome, xp: xp }
+    ];
+
+    // Ordena por XP decrescente
+    ranking.sort((a, b) => b.xp - a.xp);
+
+    const container = document.getElementById("rankingLista");
+
+    ranking.forEach((jogador, index) => {
+      const linha = document.createElement("div");
+      linha.classList.add("ranking-entry");
+      linha.innerHTML = `<span>${index + 1}º</span><span>${jogador.nome}</span><span>${jogador.xp} XP</span>`;
+      container.appendChild(linha);
+    });
+  </script>
 </body>
 </html>
